@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Weekend Departures</title>
+  <meta name="description" content="Work with Lu to book award flights and build your personalized points strategy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Mobile nav toggle -->
+  <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="brand-link">
+        <span class="brand-name">Weekend<br>Departures</span>
+      </a>
+      <p class="brand-tagline">Travel More, Spend Less</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="tools.html" class="nav-link">Free Tools</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="services.html" class="nav-link active">Services</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <p class="section-label">Services</p>
+      <h1 class="page-heading">Work with <span class="accent">Lu</span></h1>
+      <p class="page-sub">Done-for-you award bookings and personalized points strategies, built around your travel goals.</p>
+    </div>
+
+    <!-- Services Grid -->
+    <section class="services-section">
+      <div class="services-grid">
+
+        <!-- Service 1 -->
+        <div class="service-card">
+          <h2 class="service-title">Fly with Points</h2>
+          <p class="service-desc">Tell me where you want to go and I will handle the rest. I will find your award flights, identify the best transfer partners, and walk you through every step of the booking process so you get there in a premium cabin for a fraction of the cash price.</p>
+          <a href="https://nas.com/weekenddepartures/digital-files/-fly-with-points" target="_blank" rel="noopener" class="btn btn-primary">Get Started</a>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="service-card">
+          <h2 class="service-title">Personalized Points &amp; Credit Card Strategy</h2>
+          <p class="service-desc">A custom strategy built around your spending habits and travel goals. I will tell you exactly which cards to open, how to hit welcome bonuses without stress, and where to spend your points for the highest value every single time.</p>
+          <a href="https://nas.com/weekenddepartures/digital-files/-points-credit-card-strategy" target="_blank" rel="noopener" class="btn btn-primary">Get Started</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
+      <p class="footer-right"><em>Travel More, Spend Less.</em></p>
+    </footer>
+
+  </main>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openNav() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeNav() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.contains('open') ? closeNav() : openNav();
+    });
+
+    overlay.addEventListener('click', closeNav);
+  </script>
+
+</body>
+</html>

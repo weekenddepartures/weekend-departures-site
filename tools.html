@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Tools — Weekend Departures</title>
+  <meta name="description" content="Free tools to help you earn more points and find the perfect credit card for your travel goals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Mobile nav toggle -->
+  <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="brand-link">
+        <span class="brand-name">Weekend<br>Departures</span>
+      </a>
+      <p class="brand-tagline">Travel More, Spend Less</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="tools.html" class="nav-link active">Free Tools</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="services.html" class="nav-link">Services</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <p class="section-label">Free Tools</p>
+      <h1 class="page-heading">Built to maximize<br><span class="accent">every point.</span></h1>
+      <p class="page-sub">Free tools built to help you earn more points without changing your spending.</p>
+    </div>
+
+    <!-- Tools -->
+    <section class="tools-page-section">
+      <div class="content-block">
+        <div class="tools-grid">
+
+          <!-- Card Finder -->
+          <div class="tool-card">
+            <span class="tool-badge">Coming Soon</span>
+            <h2 class="tool-name">Card Finder</h2>
+            <p class="tool-desc">Find the perfect credit card for your spending habits and travel goals.</p>
+          </div>
+
+          <!-- Spending Optimizer -->
+          <div class="tool-card">
+            <span class="tool-badge">Coming Soon</span>
+            <h2 class="tool-name">Spending Optimizer</h2>
+            <p class="tool-desc">Know exactly which card to swipe for every purchase to earn maximum points.</p>
+          </div>
+
+        </div>
+
+        <p class="tools-note">More tools in the works. Subscribe to the newsletter to be the first to know when they launch.</p>
+        <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="btn btn-primary">Subscribe for Updates</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
+      <p class="footer-right"><em>Travel More, Spend Less.</em></p>
+    </footer>
+
+  </main>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openNav() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeNav() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.contains('open') ? closeNav() : openNav();
+    });
+
+    overlay.addEventListener('click', closeNav);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Weekend Departures</title>
+  <meta name="description" content="Get in touch with Weekend Departures. Questions about points, services, or just want to say hello.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Mobile nav toggle -->
+  <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="brand-link">
+        <span class="brand-name">Weekend<br>Departures</span>
+      </a>
+      <p class="brand-tagline">Travel More, Spend Less</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="tools.html" class="nav-link">Free Tools</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="services.html" class="nav-link">Services</a></li>
+        <li><a href="contact.html" class="nav-link active">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <p class="section-label">Contact</p>
+      <h1 class="page-heading">Get in <span class="accent">Touch</span></h1>
+      <p class="page-sub">Questions, collabs, or just want to talk points. Drop a message below.</p>
+    </div>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+      <div class="contact-grid">
+
+        <!-- Left: Info -->
+        <div class="contact-info">
+          <h2 class="contact-info-heading">Say hello.</h2>
+          <p class="contact-info-text">Whether you have a question about points, want to learn about services, or just want to connect, I would love to hear from you. I read every message.</p>
+          <a href="mailto:weekenddepartures@gmail.com" class="contact-email-link">weekenddepartures@gmail.com</a>
+        </div>
+
+        <!-- Right: Form -->
+        <!-- To enable form submissions, replace the action URL with your Formspree endpoint: https://formspree.io -->
+        <form
+          action="https://formspree.io/f/YOUR_FORM_ID"
+          method="POST"
+          class="contact-form"
+        >
+          <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-input"
+              placeholder="Your name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="your@email.com"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="message" class="form-label">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              class="form-textarea"
+              placeholder="What's on your mind?"
+              required
+            ></textarea>
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </div>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
+      <p class="footer-right"><em>Travel More, Spend Less.</em></p>
+    </footer>
+
+  </main>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openNav() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeNav() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.contains('open') ? closeNav() : openNav();
+    });
+
+    overlay.addEventListener('click', closeNav);
+  </script>
+
+</body>
+</html>
