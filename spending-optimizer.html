@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spending Optimizer — Weekend Departures</title>
+  <meta name="description" content="Find out exactly which card to swipe for every purchase to earn the most points. Free tool from Weekend Departures.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .tool-section   { padding: 64px 80px 96px; }
+    .opt-wrap       { max-width: 860px; }
+
+    /* Block headings */
+    .opt-block { margin-bottom: 52px; }
+    .opt-block-heading {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .opt-block-sub {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* Card selection grid */
+    .card-select-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .card-cb-item { position: relative; }
+    .card-cb-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    .card-cb-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 16px;
+      background: #fff;
+      border: 1.5px solid rgba(26,26,26,0.1);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.35;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .card-cb-label:hover { border-color: rgba(184,151,46,0.5); }
+    .card-cb-input:checked + .card-cb-label {
+      border-color: var(--gold);
+      background: rgba(184,151,46,0.05);
+    }
+    .cb-check {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid rgba(26,26,26,0.25);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .card-cb-input:checked + .card-cb-label .cb-check {
+      border-color: var(--gold);
+      background: var(--gold);
+    }
+    .cb-check-mark {
+      display: none;
+      width: 8px;
+      height: 5px;
+      border-left: 1.5px solid #fff;
+      border-bottom: 1.5px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+    }
+    .card-cb-input:checked + .card-cb-label .cb-check-mark { display: block; }
+
+    /* Spending + card assignment table */
+    .opt-table {
+      width: 100%;
+      border: 1px solid rgba(26,26,26,0.1);
+      background: #fff;
+    }
+    .opt-table-header {
+      display: grid;
+      grid-template-columns: 1fr 130px 1fr;
+      gap: 0;
+      padding: 11px 22px;
+      background: var(--charcoal);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .opt-th {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(255,255,255,0.45);
+    }
+    .opt-row {
+      display: grid;
+      grid-template-columns: 1fr 130px 1fr;
+      gap: 0;
+      align-items: center;
+      padding: 14px 22px;
+      border-bottom: 1px solid rgba(26,26,26,0.07);
+    }
+    .opt-row:last-child { border-bottom: none; }
+    .opt-cat {
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--text);
+      padding-right: 16px;
+    }
+    .opt-input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(26,26,26,0.15);
+      background: var(--bg);
+      width: 110px;
+      flex-shrink: 0;
+    }
+    .opt-input-wrap:focus-within { border-color: var(--gold); }
+    .opt-dollar {
+      padding: 8px 6px 8px 11px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      user-select: none;
+    }
+    .opt-spend-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--text);
+      width: 100%;
+      padding: 8px 8px 8px 0;
+      -moz-appearance: textfield;
+    }
+    .opt-spend-input::-webkit-outer-spin-button,
+    .opt-spend-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .opt-select {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid rgba(26,26,26,0.15);
+      padding: 8px 12px;
+      width: 100%;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7168' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 30px;
+      border-radius: 0;
+      transition: border-color 0.2s;
+      margin-left: 16px;
+    }
+    .opt-select:focus { border-color: var(--gold); }
+    .opt-select option { background: #fff; }
+
+    /* Error */
+    .opt-error {
+      font-size: 0.82rem;
+      color: #c0392b;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    /* Calculate button */
+    .calc-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+    /* Results section */
+    .results-section { padding: 64px 80px 96px; }
+
+    /* Summary bar */
+    .opt-summary {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--charcoal);
+      margin-bottom: 44px;
+      max-width: 760px;
+    }
+    .opt-sum-block {
+      flex: 1;
+      padding: 28px 32px;
+    }
+    .opt-sum-block + .opt-sum-block {
+      border-left: 1px solid rgba(255,255,255,0.08);
+    }
+    .opt-sum-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 8px;
+    }
+    .opt-sum-value {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1;
+    }
+    .opt-sum-value.is-gold { color: var(--gold); }
+
+    /* Breakdown table */
+    .breakdown-wrap {
+      max-width: 860px;
+      overflow-x: auto;
+      margin-bottom: 48px;
+    }
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+    .breakdown-table thead tr {
+      background: #fff;
+      border-bottom: 2px solid rgba(26,26,26,0.08);
+    }
+    .breakdown-table th {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 12px 16px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .breakdown-table tbody tr {
+      border-bottom: 1px solid rgba(26,26,26,0.06);
+      background: #fff;
+    }
+    .breakdown-table tbody tr:last-child { border-bottom: none; }
+    .breakdown-table td {
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .breakdown-table td:first-child { font-weight: 500; }
+    .td-best-card { color: var(--gold); font-weight: 500 !important; }
+    .td-gain { font-weight: 600 !important; }
+    .td-gain.positive { color: var(--gold); }
+    .breakdown-table tfoot tr {
+      background: rgba(184,151,46,0.07);
+      border-top: 2px solid rgba(26,26,26,0.08);
+    }
+    .breakdown-table tfoot td {
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Locked section */
+    .locked-section {
+      max-width: 600px;
+      margin-bottom: 48px;
+      padding: 40px;
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      border-top: 3px solid var(--gold);
+    }
+    .locked-eyebrow {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .locked-heading {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+    .locked-blur-wrap { position: relative; }
+    .locked-content { transition: filter 0.3s ease; }
+    .locked-content.blurred {
+      filter: blur(7px);
+      user-select: none;
+      pointer-events: none;
+    }
+    .locked-card-name {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .locked-card-detail {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: #4a4540;
+      line-height: 1.72;
+    }
+    .locked-gate {
+      position: absolute;
+      inset: -6px;
+      background: rgba(255,255,255,0.96);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px 0;
+    }
+    .gate-text {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .gate-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .gate-email {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid rgba(26,26,26,0.2);
+      padding: 9px 14px;
+      outline: none;
+      width: 210px;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.2s;
+    }
+    .gate-email:focus { border-color: var(--gold); }
+    .gate-btn { padding: 9px 18px; font-size: 0.58rem; }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .tool-section, .results-section {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+      .card-select-grid { grid-template-columns: repeat(2,1fr); }
+      .opt-summary { flex-direction: column; max-width: 100%; }
+      .opt-sum-block + .opt-sum-block { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
+    }
+    @media (max-width: 520px) {
+      .card-select-grid { grid-template-columns: 1fr; }
+      .opt-row { grid-template-columns: 1fr; gap: 8px; padding: 14px 16px; }
+      .opt-th:not(:first-child) { display: none; }
+      .opt-select { margin-left: 0; }
+      .gate-input-row { flex-direction: column; align-items: flex-start; }
+      .gate-email { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile nav toggle -->
+  <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="brand-link">
+        <span class="brand-name">Weekend<br>Departures</span>
+      </a>
+      <p class="brand-tagline">Travel More, Spend Less</p>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="tools.html" class="nav-link active">Free Tools</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="services.html" class="nav-link">Services</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <div class="page-header">
+      <p class="section-label">Free Tools</p>
+      <h1 class="page-heading">Spending <span class="accent">Optimizer</span></h1>
+      <p class="page-sub">Find out exactly which card to swipe for every purchase to earn the most points possible.</p>
+    </div>
+
+    <!-- Input Section -->
+    <section class="tool-section" id="toolSection">
+      <div class="opt-wrap">
+
+        <!-- Step 1: Card selection -->
+        <div class="opt-block">
+          <h2 class="opt-block-heading">Step 1: Select the cards in your wallet</h2>
+          <p class="opt-block-sub">Check every credit card you currently own. You can select as many as you like.</p>
+          <div class="card-select-grid">
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb0" value="Chase Sapphire Preferred">
+              <label class="card-cb-label" for="cb0">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Chase Sapphire Preferred
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb1" value="Chase Sapphire Reserve">
+              <label class="card-cb-label" for="cb1">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Chase Sapphire Reserve
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb2" value="Chase Freedom Unlimited">
+              <label class="card-cb-label" for="cb2">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Chase Freedom Unlimited
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb3" value="Chase Freedom Flex">
+              <label class="card-cb-label" for="cb3">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Chase Freedom Flex
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb4" value="Amex Gold Card">
+              <label class="card-cb-label" for="cb4">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Amex Gold Card
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb5" value="Amex Platinum">
+              <label class="card-cb-label" for="cb5">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Amex Platinum
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb6" value="Amex Blue Cash Preferred">
+              <label class="card-cb-label" for="cb6">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Amex Blue Cash Preferred
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb7" value="Citi Double Cash">
+              <label class="card-cb-label" for="cb7">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Citi Double Cash
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb8" value="Citi Premier Card">
+              <label class="card-cb-label" for="cb8">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Citi Premier Card
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb9" value="Capital One Venture X">
+              <label class="card-cb-label" for="cb9">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Capital One Venture X
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb10" value="Capital One Venture">
+              <label class="card-cb-label" for="cb10">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Capital One Venture
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb11" value="Capital One SavorOne">
+              <label class="card-cb-label" for="cb11">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Capital One SavorOne
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb12" value="Discover it Cash Back">
+              <label class="card-cb-label" for="cb12">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Discover it Cash Back
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb13" value="Wells Fargo Autograph">
+              <label class="card-cb-label" for="cb13">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Wells Fargo Autograph
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb14" value="Citi Custom Cash">
+              <label class="card-cb-label" for="cb14">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Citi Custom Cash
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb15" value="World of Hyatt Card">
+              <label class="card-cb-label" for="cb15">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                World of Hyatt Card
+              </label>
+            </div>
+            <div class="card-cb-item">
+              <input type="checkbox" class="card-cb-input" id="cb16" value="Discover it Secured">
+              <label class="card-cb-label" for="cb16">
+                <span class="cb-check"><span class="cb-check-mark"></span></span>
+                Discover it Secured
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Spending + current card -->
+        <div class="opt-block">
+          <h2 class="opt-block-heading">Step 2: Enter your monthly spending</h2>
+          <p class="opt-block-sub">Add your approximate monthly spend for each category, and which card you currently swipe for it.</p>
+          <div class="opt-table">
+            <div class="opt-table-header">
+              <span class="opt-th">Category</span>
+              <span class="opt-th">Monthly Spend</span>
+              <span class="opt-th">Card You Currently Use</span>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Dining &amp; Restaurants</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="optdining" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="seldining">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Travel (flights, hotels, etc.)</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="opttravel" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="seltravel">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Groceries</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="optgroceries" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="selgroceries">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Gas &amp; Transportation</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="optgas" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="selgas">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Shopping &amp; Retail</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="optshopping" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="selshopping">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+            <div class="opt-row">
+              <span class="opt-cat">Subscriptions &amp; Streaming</span>
+              <div class="opt-input-wrap">
+                <span class="opt-dollar">$</span>
+                <input type="number" class="opt-spend-input" id="optsubscriptions" placeholder="0" min="0">
+              </div>
+              <select class="opt-select" id="selsubscriptions">
+                <option value="">Not assigned</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="calcError" class="opt-error" style="display:none;"></div>
+        <div class="calc-row">
+          <button class="btn btn-primary" onclick="calculate()">Calculate My Savings &rarr;</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Results Section (hidden initially) -->
+    <section class="results-section" id="resultsSection" style="display:none;">
+
+      <div class="results-header" style="margin-bottom:36px;">
+        <p class="section-label">Your Results</p>
+        <h2 class="results-heading" style="font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;line-height:1.1;margin-bottom:8px;">Points left <span class="accent">on the table</span></h2>
+        <p class="results-sub" style="font-size:0.9rem;font-weight:300;color:var(--muted);">Here is what your wallet earns now vs. what it could earn with the right card for each category.</p>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="opt-summary">
+        <div class="opt-sum-block">
+          <div class="opt-sum-label">Current Monthly Points</div>
+          <div class="opt-sum-value" id="sumCurrent">0</div>
+        </div>
+        <div class="opt-sum-block">
+          <div class="opt-sum-label">Optimized Monthly Points</div>
+          <div class="opt-sum-value is-gold" id="sumOptimized">0</div>
+        </div>
+        <div class="opt-sum-block">
+          <div class="opt-sum-label">Monthly Points You're Missing</div>
+          <div class="opt-sum-value is-gold" id="sumGain">0</div>
+        </div>
+      </div>
+
+      <!-- Breakdown table -->
+      <div class="breakdown-wrap">
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Spend</th>
+              <th>Your Card</th>
+              <th>Your Points</th>
+              <th>Best Card</th>
+              <th>Max Points</th>
+              <th>Monthly Gain</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownBody"></tbody>
+          <tfoot>
+            <tr id="breakdownTotals"></tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Locked recommendation -->
+      <div class="locked-section">
+        <p class="locked-eyebrow">Your Top Card</p>
+        <h3 class="locked-heading">The one card you should never leave home without.</h3>
+        <div class="locked-blur-wrap">
+          <div class="locked-content blurred" id="lockedContent">
+            <div class="locked-card-name" id="lockedCardName">Loading...</div>
+            <div class="locked-card-detail" id="lockedCardDetail"></div>
+          </div>
+          <div class="locked-gate" id="lockedGate">
+            <p class="gate-text">Enter your email to see your single best card recommendation</p>
+            <div class="gate-input-row">
+              <input type="email" class="gate-email" id="lockedEmail" placeholder="your@email.com">
+              <button class="btn btn-primary gate-btn" onclick="unlockRec()">Reveal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-ghost" onclick="recalculate()" style="margin-top:8px;">&larr; Recalculate</button>
+
+    </section>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
+      <p class="footer-right"><em>Travel More, Spend Less.</em></p>
+    </footer>
+
+  </main>
+
+  <script>
+    /* Nav */
+    const toggle  = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeNav() : openNav());
+    overlay.addEventListener('click', closeNav);
+    function openNav()  { sidebar.classList.add('open');    overlay.classList.add('visible');    toggle.setAttribute('aria-expanded','true');  }
+    function closeNav() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); toggle.setAttribute('aria-expanded','false'); }
+
+    /* Card data */
+    const CARDS = [
+      { name:'Chase Sapphire Preferred',   dining:3,   travel:5,  groceries:3,   gas:2,   shopping:1,   subscriptions:3   },
+      { name:'Chase Sapphire Reserve',     dining:3,   travel:10, groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
+      { name:'Chase Freedom Unlimited',    dining:3,   travel:5,  groceries:1.5, gas:1.5, shopping:1.5, subscriptions:1.5 },
+      { name:'Chase Freedom Flex',         dining:3,   travel:5,  groceries:5,   gas:5,   shopping:1,   subscriptions:1   },
+      { name:'Amex Gold Card',             dining:4,   travel:3,  groceries:4,   gas:1,   shopping:1,   subscriptions:1   },
+      { name:'Amex Platinum',              dining:1,   travel:5,  groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
+      { name:'Amex Blue Cash Preferred',   dining:1,   travel:1,  groceries:6,   gas:3,   shopping:1,   subscriptions:6   },
+      { name:'Citi Double Cash',           dining:2,   travel:2,  groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
+      { name:'Citi Premier Card',          dining:3,   travel:3,  groceries:3,   gas:3,   shopping:1,   subscriptions:1   },
+      { name:'Capital One Venture X',      dining:2,   travel:10, groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
+      { name:'Capital One Venture',        dining:2,   travel:5,  groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
+      { name:'Capital One SavorOne',       dining:3,   travel:1,  groceries:3,   gas:1,   shopping:1,   subscriptions:3   },
+      { name:'Discover it Cash Back',      dining:5,   travel:1,  groceries:5,   gas:5,   shopping:1,   subscriptions:1   },
+      { name:'Wells Fargo Autograph',      dining:3,   travel:3,  groceries:1,   gas:3,   shopping:1,   subscriptions:3   },
+      { name:'Citi Custom Cash',           dining:5,   travel:5,  groceries:5,   gas:5,   shopping:5,   subscriptions:5   },
+      { name:'World of Hyatt Card',        dining:2,   travel:2,  groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
+      { name:'Discover it Secured',        dining:2,   travel:1,  groceries:1,   gas:2,   shopping:1,   subscriptions:1   }
+    ];
+
+    const CATEGORIES = [
+      { id:'dining',        label:'Dining',         key:'dining' },
+      { id:'travel',        label:'Travel',         key:'travel' },
+      { id:'groceries',     label:'Groceries',      key:'groceries' },
+      { id:'gas',           label:'Gas',            key:'gas' },
+      { id:'shopping',      label:'Shopping',       key:'shopping' },
+      { id:'subscriptions', label:'Subscriptions',  key:'subscriptions' }
+    ];
+
+    /* Update dropdowns when cards are checked/unchecked */
+    function updateDropdowns() {
+      const selected = [...document.querySelectorAll('.card-cb-input:checked')].map(cb => cb.value);
+      CATEGORIES.forEach(cat => {
+        const sel = document.getElementById('sel' + cat.id);
+        const prev = sel.value;
+        sel.innerHTML = '<option value="">Not assigned</option>';
+        selected.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          if (name === prev) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    document.querySelectorAll('.card-cb-input').forEach(cb => cb.addEventListener('change', updateDropdowns));
+
+    /* Calculate */
+    function calculate() {
+      const selectedNames = [...document.querySelectorAll('.card-cb-input:checked')].map(cb => cb.value);
+      const errEl = document.getElementById('calcError');
+
+      if (!selectedNames.length) {
+        errEl.textContent = 'Please select at least one card in your wallet to continue.';
+        errEl.style.display = 'block';
+        setTimeout(() => { errEl.style.display = 'none'; }, 4000);
+        return;
+      }
+
+      const selectedCards = CARDS.filter(c => selectedNames.includes(c.name));
+      let hasSpend = false;
+      let totalCurrentPts = 0;
+      let totalOptPts = 0;
+      const rows = [];
+
+      CATEGORIES.forEach(cat => {
+        const spend = parseInt(document.getElementById('opt' + cat.id).value) || 0;
+        if (!spend) return;
+        hasSpend = true;
+
+        const currentCardName = document.getElementById('sel' + cat.id).value;
+        const currentCard = CARDS.find(c => c.name === currentCardName) || null;
+        const currentPts = currentCard ? Math.round(spend * currentCard[cat.key]) : 0;
+
+        let bestCard = null;
+        let bestPts = 0;
+        selectedCards.forEach(c => {
+          const pts = Math.round(spend * c[cat.key]);
+          if (pts > bestPts) { bestPts = pts; bestCard = c; }
+        });
+
+        const gain = bestPts - currentPts;
+        totalCurrentPts += currentPts;
+        totalOptPts += bestPts;
+
+        rows.push({
+          label: cat.label,
+          spend,
+          currentCardName: currentCard ? currentCard.name : '--',
+          currentPts,
+          bestCardName: bestCard ? bestCard.name : '--',
+          bestPts,
+          gain
+        });
+      });
+
+      if (!hasSpend) {
+        errEl.textContent = 'Please enter at least one spending amount to continue.';
+        errEl.style.display = 'block';
+        setTimeout(() => { errEl.style.display = 'none'; }, 4000);
+        return;
+      }
+
+      errEl.style.display = 'none';
+
+      /* Summary */
+      document.getElementById('sumCurrent').textContent   = totalCurrentPts.toLocaleString();
+      document.getElementById('sumOptimized').textContent = totalOptPts.toLocaleString();
+      document.getElementById('sumGain').textContent      = (totalOptPts - totalCurrentPts).toLocaleString();
+
+      /* Table rows */
+      const tbody = document.getElementById('breakdownBody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.label}</td>
+          <td>$${r.spend.toLocaleString()}/mo</td>
+          <td>${r.currentCardName}</td>
+          <td>${r.currentPts.toLocaleString()}</td>
+          <td class="td-best-card">${r.bestCardName}</td>
+          <td>${r.bestPts.toLocaleString()}</td>
+          <td class="td-gain${r.gain > 0 ? ' positive' : ''}">+${r.gain.toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      /* Totals row */
+      const totalGain = totalOptPts - totalCurrentPts;
+      document.getElementById('breakdownTotals').innerHTML = `
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td>${totalCurrentPts.toLocaleString()}</td>
+        <td></td>
+        <td>${totalOptPts.toLocaleString()}</td>
+        <td>+${totalGain.toLocaleString()}</td>
+      `;
+
+      /* Best single card across all spend */
+      const cardTotals = selectedCards.map(c => {
+        const total = CATEGORIES.reduce((sum, cat) => {
+          const spend = parseInt(document.getElementById('opt' + cat.id).value) || 0;
+          return sum + Math.round(spend * c[cat.key]);
+        }, 0);
+        return { card: c, total };
+      }).sort((a, b) => b.total - a.total);
+
+      const best = cardTotals[0];
+      document.getElementById('lockedCardName').textContent = best.card.name;
+      document.getElementById('lockedCardDetail').textContent =
+        'Used across all your spending, this card earns you ' + best.total.toLocaleString() +
+        ' points per month. That is roughly $' + Math.round(best.total * 0.015).toLocaleString() +
+        ' in travel value every single month.';
+
+      /* Show results */
+      document.getElementById('toolSection').style.display = 'none';
+      document.getElementById('resultsSection').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function unlockRec() {
+      const input = document.getElementById('lockedEmail');
+      const val = (input.value || '').trim();
+      if (!val || !val.includes('@') || !val.includes('.')) {
+        input.style.borderColor = '#c0392b';
+        setTimeout(() => { input.style.borderColor = ''; }, 2000);
+        return;
+      }
+      window.open('https://weekenddepartures.substack.com/subscribe?email=' + encodeURIComponent(val), '_blank');
+      document.getElementById('lockedContent').classList.remove('blurred');
+      document.getElementById('lockedGate').style.display = 'none';
+    }
+
+    function recalculate() {
+      document.getElementById('toolSection').style.display = 'block';
+      document.getElementById('resultsSection').style.display = 'none';
+      document.getElementById('lockedContent').classList.add('blurred');
+      document.getElementById('lockedGate').style.display = 'flex';
+      document.getElementById('lockedEmail').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

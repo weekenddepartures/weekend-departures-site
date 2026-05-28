@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Finder — Weekend Departures</title>
+  <meta name="description" content="Find the best travel credit card for your spending habits and goals. Free tool from Weekend Departures.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .tool-section  { padding: 64px 80px 96px; }
+    .quiz-wrap     { max-width: 660px; }
+
+    /* Progress */
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 52px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 2px;
+      background: rgba(26,26,26,0.1);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .step-count {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* Steps */
+    .quiz-step { display: none; }
+    .quiz-step.active {
+      display: block;
+      animation: fadeUp 0.3s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .step-heading {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 2.8vw, 2rem);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .step-sub {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .step-actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 36px;
+    }
+
+    /* Option cards (goals, score, fee) */
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .option-grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .opt-label {
+      display: block;
+      padding: 18px 20px;
+      background: #fff;
+      border: 1.5px solid rgba(26,26,26,0.1);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .opt-label:hover { border-color: rgba(184,151,46,0.55); }
+
+    .opt-label input[type="radio"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    .opt-label.selected {
+      border-color: var(--gold);
+      background: rgba(184,151,46,0.05);
+    }
+    .opt-title {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .opt-sub {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Spend rows */
+    .spend-grid {
+      border: 1px solid rgba(26,26,26,0.1);
+      background: #fff;
+    }
+    .spend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 22px;
+      border-bottom: 1px solid rgba(26,26,26,0.07);
+      gap: 16px;
+    }
+    .spend-row:last-child { border-bottom: none; }
+    .spend-label {
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--text);
+      flex: 1;
+    }
+    .spend-input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(26,26,26,0.15);
+      background: var(--bg);
+      width: 120px;
+      flex-shrink: 0;
+    }
+    .spend-input-wrap:focus-within { border-color: var(--gold); }
+    .spend-dollar {
+      padding: 9px 8px 9px 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      user-select: none;
+    }
+    .spend-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: var(--text);
+      width: 100%;
+      padding: 9px 10px 9px 0;
+      -moz-appearance: textfield;
+    }
+    .spend-input::-webkit-outer-spin-button,
+    .spend-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    /* Error */
+    .quiz-error {
+      font-size: 0.8rem;
+      color: #c0392b;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+
+    /* Results */
+    .results-section { padding: 64px 80px 96px; }
+    .results-header  { margin-bottom: 44px; }
+    .results-heading {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .results-sub {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .result-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 660px;
+      margin-bottom: 40px;
+    }
+    .result-card {
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 36px 40px 40px;
+    }
+    .result-card--top { border-top: 3px solid var(--gold); }
+    .result-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 4px 10px;
+      margin-bottom: 14px;
+    }
+    .result-card-name {
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+    .result-card-tag {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+    .result-stats {
+      display: flex;
+      gap: 36px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(26,26,26,0.07);
+      margin-bottom: 22px;
+    }
+    .result-stat { display: flex; flex-direction: column; gap: 4px; }
+    .stat-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .stat-value {
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Bonus blur + gate */
+    .result-bonus-wrap {
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(26,26,26,0.07);
+      margin-bottom: 20px;
+    }
+    .bonus-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .bonus-blur-wrap { position: relative; }
+    .bonus-content { transition: filter 0.3s ease; }
+    .bonus-content.blurred {
+      filter: blur(7px);
+      user-select: none;
+      pointer-events: none;
+    }
+    .bonus-amount {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .bonus-req {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .bonus-val {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .bonus-gate {
+      position: absolute;
+      inset: -6px;
+      background: rgba(245,240,232,0.97);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px 0;
+    }
+    .gate-text {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .gate-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .gate-email {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.2);
+      padding: 9px 14px;
+      outline: none;
+      width: 210px;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.2s;
+    }
+    .gate-email:focus { border-color: var(--gold); }
+    .gate-btn { padding: 9px 18px; font-size: 0.58rem; }
+
+    .result-why {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: #4a4540;
+      line-height: 1.72;
+    }
+    .result-why strong { font-weight: 600; color: var(--text); }
+
+    .no-results {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--muted);
+      padding: 32px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .tool-section, .results-section {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+      .option-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 520px) {
+      .option-grid,
+      .option-grid-2 { grid-template-columns: 1fr; }
+      .gate-input-row { flex-direction: column; align-items: flex-start; }
+      .gate-email { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile nav toggle -->
+  <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="brand-link">
+        <span class="brand-name">Weekend<br>Departures</span>
+      </a>
+      <p class="brand-tagline">Travel More, Spend Less</p>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="tools.html" class="nav-link active">Free Tools</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="services.html" class="nav-link">Services</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <div class="page-header">
+      <p class="section-label">Free Tools</p>
+      <h1 class="page-heading">Card <span class="accent">Finder</span></h1>
+      <p class="page-sub">Answer 4 quick questions to find the best credit card for your spending habits and goals.</p>
+    </div>
+
+    <!-- Quiz -->
+    <section class="tool-section" id="quizSection">
+      <div class="quiz-wrap">
+
+        <div class="quiz-progress">
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <span class="step-count" id="stepCount">Step 1 of 4</span>
+        </div>
+
+        <!-- Step 1: Goal -->
+        <div class="quiz-step active" id="step1">
+          <h2 class="step-heading">What is your primary goal?</h2>
+          <p class="step-sub">Choose the one that matters most to you right now.</p>
+          <div class="option-grid" id="goalGrid">
+            <label class="opt-label" data-name="goal" data-val="travel">
+              <input type="radio" name="goal" value="travel">
+              <span class="opt-title">Earn travel rewards</span>
+            </label>
+            <label class="opt-label" data-name="goal" data-val="cashback">
+              <input type="radio" name="goal" value="cashback">
+              <span class="opt-title">Earn cash back</span>
+            </label>
+            <label class="opt-label" data-name="goal" data-val="lounge">
+              <input type="radio" name="goal" value="lounge">
+              <span class="opt-title">Airport lounge access</span>
+            </label>
+            <label class="opt-label" data-name="goal" data-val="hotels">
+              <input type="radio" name="goal" value="hotels">
+              <span class="opt-title">Free hotel stays</span>
+            </label>
+            <label class="opt-label" data-name="goal" data-val="everyday">
+              <input type="radio" name="goal" value="everyday">
+              <span class="opt-title">Maximize everyday spending</span>
+            </label>
+            <label class="opt-label" data-name="goal" data-val="building">
+              <input type="radio" name="goal" value="building">
+              <span class="opt-title">Build credit</span>
+            </label>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" onclick="nextStep(1)">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Monthly Spend -->
+        <div class="quiz-step" id="step2">
+          <h2 class="step-heading">How much do you spend per month?</h2>
+          <p class="step-sub">Approximate amounts are fine. Leave blank if a category does not apply to you.</p>
+          <div class="spend-grid">
+            <div class="spend-row">
+              <label class="spend-label" for="spendDining">Dining &amp; Restaurants</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendDining" placeholder="0" min="0">
+              </div>
+            </div>
+            <div class="spend-row">
+              <label class="spend-label" for="spendTravel">Travel (flights, hotels, etc.)</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendTravel" placeholder="0" min="0">
+              </div>
+            </div>
+            <div class="spend-row">
+              <label class="spend-label" for="spendGroceries">Groceries</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendGroceries" placeholder="0" min="0">
+              </div>
+            </div>
+            <div class="spend-row">
+              <label class="spend-label" for="spendGas">Gas &amp; Transportation</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendGas" placeholder="0" min="0">
+              </div>
+            </div>
+            <div class="spend-row">
+              <label class="spend-label" for="spendShopping">Shopping &amp; Retail</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendShopping" placeholder="0" min="0">
+              </div>
+            </div>
+            <div class="spend-row">
+              <label class="spend-label" for="spendSubs">Subscriptions &amp; Streaming</label>
+              <div class="spend-input-wrap">
+                <span class="spend-dollar">$</span>
+                <input type="number" class="spend-input" id="spendSubs" placeholder="0" min="0">
+              </div>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-ghost" onclick="prevStep(2)">&larr; Back</button>
+            <button class="btn btn-primary" onclick="nextStep(2)">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Credit Score -->
+        <div class="quiz-step" id="step3">
+          <h2 class="step-heading">What is your credit score range?</h2>
+          <p class="step-sub">This filters out cards you are unlikely to be approved for.</p>
+          <div class="option-grid option-grid-2" id="scoreGrid">
+            <label class="opt-label" data-name="score" data-val="750">
+              <input type="radio" name="score" value="750">
+              <span class="opt-title">Excellent</span>
+              <span class="opt-sub">750 or above</span>
+            </label>
+            <label class="opt-label" data-name="score" data-val="700">
+              <input type="radio" name="score" value="700">
+              <span class="opt-title">Good</span>
+              <span class="opt-sub">700 to 749</span>
+            </label>
+            <label class="opt-label" data-name="score" data-val="650">
+              <input type="radio" name="score" value="650">
+              <span class="opt-title">Fair</span>
+              <span class="opt-sub">650 to 699</span>
+            </label>
+            <label class="opt-label" data-name="score" data-val="0">
+              <input type="radio" name="score" value="0">
+              <span class="opt-title">Building</span>
+              <span class="opt-sub">Below 650 or no history</span>
+            </label>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-ghost" onclick="prevStep(3)">&larr; Back</button>
+            <button class="btn btn-primary" onclick="nextStep(3)">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Annual Fee -->
+        <div class="quiz-step" id="step4">
+          <h2 class="step-heading">Annual fee preference?</h2>
+          <p class="step-sub">Premium cards often include statement credits that offset the fee entirely.</p>
+          <div class="option-grid option-grid-2" id="feeGrid">
+            <label class="opt-label" data-name="fee" data-val="0">
+              <input type="radio" name="fee" value="0">
+              <span class="opt-title">No fee</span>
+              <span class="opt-sub">$0 only</span>
+            </label>
+            <label class="opt-label" data-name="fee" data-val="100">
+              <input type="radio" name="fee" value="100">
+              <span class="opt-title">Up to $100</span>
+              <span class="opt-sub">Worth it for the right perks</span>
+            </label>
+            <label class="opt-label" data-name="fee" data-val="400">
+              <input type="radio" name="fee" value="400">
+              <span class="opt-title">Up to $400</span>
+              <span class="opt-sub">Premium cards welcome</span>
+            </label>
+            <label class="opt-label" data-name="fee" data-val="999">
+              <input type="radio" name="fee" value="999">
+              <span class="opt-title">No limit</span>
+              <span class="opt-sub">I want the best card, period</span>
+            </label>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-ghost" onclick="prevStep(4)">&larr; Back</button>
+            <button class="btn btn-primary" onclick="showResults()">See My Cards &rarr;</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="results-section" id="resultsSection" style="display:none;">
+      <div class="results-header">
+        <p class="section-label">Your Results</p>
+        <h2 class="results-heading">Your top <span class="accent">3 cards</span></h2>
+        <p class="results-sub">Based on your spending habits and preferences. Monthly points are estimates.</p>
+      </div>
+      <div class="result-cards" id="resultCards"></div>
+      <button class="btn btn-ghost" onclick="resetQuiz()" style="margin-top:8px;">&larr; Retake the quiz</button>
+    </section>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
+      <p class="footer-right"><em>Travel More, Spend Less.</em></p>
+    </footer>
+
+  </main>
+
+  <script>
+    /* Nav */
+    const toggle  = document.getElementById('navToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeNav() : openNav());
+    overlay.addEventListener('click', closeNav);
+    function openNav()  { sidebar.classList.add('open');    overlay.classList.add('visible');    toggle.setAttribute('aria-expanded','true');  }
+    function closeNav() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); toggle.setAttribute('aria-expanded','false'); }
+
+    /* Option card click -> highlight */
+    document.querySelectorAll('.opt-label').forEach(lbl => {
+      lbl.addEventListener('click', () => {
+        const name = lbl.dataset.name;
+        document.querySelectorAll('.opt-label[data-name="' + name + '"]')
+                .forEach(l => l.classList.remove('selected'));
+        lbl.classList.add('selected');
+      });
+    });
+
+    /* Card data */
+    const CARDS = [
+      { name:'Chase Sapphire Preferred',   dining:3, travel:5,  groceries:3,   gas:2,   shopping:1,   subscriptions:3,  fee:95,  minScore:700, bonus:'60,000 points',      bonusReq:'after $4,000 in purchases in the first 3 months',  bonusVal:'$750',    types:['travel','everyday'],      tag:'Best all-around travel card' },
+      { name:'Chase Sapphire Reserve',     dining:3, travel:10, groceries:1,   gas:1,   shopping:1,   subscriptions:1,  fee:550, minScore:750, bonus:'60,000 points',      bonusReq:'after $4,000 in purchases in the first 3 months',  bonusVal:'$900',    types:['travel','lounge'],        tag:'Premium travel + lounge access' },
+      { name:'Chase Freedom Unlimited',    dining:3, travel:5,  groceries:1.5, gas:1.5, shopping:1.5, subscriptions:1.5,fee:0,   minScore:670, bonus:'20,000 points',      bonusReq:'after $500 in purchases in the first 3 months',    bonusVal:'$200',    types:['cashback','travel','everyday'], tag:'No-fee earner on everything' },
+      { name:'Chase Freedom Flex',         dining:3, travel:5,  groceries:5,   gas:5,   shopping:1,   subscriptions:1,  fee:0,   minScore:670, bonus:'20,000 points',      bonusReq:'after $500 in purchases in the first 3 months',    bonusVal:'$200',    types:['cashback','everyday'],    tag:'Max points on groceries and gas' },
+      { name:'Amex Gold Card',             dining:4, travel:3,  groceries:4,   gas:1,   shopping:1,   subscriptions:1,  fee:325, minScore:700, bonus:'60,000 points',      bonusReq:'after $6,000 in purchases in the first 6 months',  bonusVal:'$1,200',  types:['travel','everyday'],      tag:'Best for dining and groceries' },
+      { name:'Amex Platinum',              dining:1, travel:5,  groceries:1,   gas:1,   shopping:1,   subscriptions:1,  fee:695, minScore:750, bonus:'80,000 points',      bonusReq:'after $8,000 in purchases in the first 6 months',  bonusVal:'$1,600',  types:['travel','lounge'],        tag:'The ultimate lounge card' },
+      { name:'Amex Blue Cash Preferred',   dining:1, travel:1,  groceries:6,   gas:3,   shopping:1,   subscriptions:6,  fee:95,  minScore:670, bonus:'$250 statement credit',bonusReq:'after $3,000 in purchases in the first 6 months', bonusVal:'$250',   types:['cashback','everyday'],    tag:'Best cash back on groceries' },
+      { name:'Citi Double Cash',           dining:2, travel:2,  groceries:2,   gas:2,   shopping:2,   subscriptions:2,  fee:0,   minScore:650, bonus:'$200 cash back',     bonusReq:'after $1,500 in purchases in the first 6 months',  bonusVal:'$200',    types:['cashback','everyday'],    tag:'Simple flat-rate cash back' },
+      { name:'Citi Premier Card',          dining:3, travel:3,  groceries:3,   gas:3,   shopping:1,   subscriptions:1,  fee:95,  minScore:700, bonus:'60,000 points',      bonusReq:'after $4,000 in purchases in the first 3 months',  bonusVal:'$600',    types:['travel','everyday'],      tag:'Strong across all major categories' },
+      { name:'Capital One Venture X',      dining:2, travel:10, groceries:2,   gas:2,   shopping:2,   subscriptions:2,  fee:395, minScore:750, bonus:'75,000 miles',       bonusReq:'after $4,000 in purchases in the first 3 months',  bonusVal:'$750',    types:['travel','lounge','hotels'],'tag':'Premium travel at a lower annual fee' },
+      { name:'Capital One Venture',        dining:2, travel:5,  groceries:2,   gas:2,   shopping:2,   subscriptions:2,  fee:95,  minScore:700, bonus:'60,000 miles',       bonusReq:'after $3,000 in purchases in the first 3 months',  bonusVal:'$600',    types:['travel'],                 tag:'Simple miles on every purchase' },
+      { name:'Capital One SavorOne',       dining:3, travel:1,  groceries:3,   gas:1,   shopping:1,   subscriptions:3,  fee:0,   minScore:670, bonus:'$200 cash back',     bonusReq:'after $500 in purchases in the first 3 months',    bonusVal:'$200',    types:['cashback','everyday'],    tag:'No-fee dining and grocery cash back' },
+      { name:'Discover it Cash Back',      dining:5, travel:1,  groceries:5,   gas:5,   shopping:1,   subscriptions:1,  fee:0,   minScore:650, bonus:'Cash back match',    bonusReq:'Discover matches all cash back earned in your first year', bonusVal:'Varies', types:['cashback','everyday'], tag:'First-year cash back automatically doubled' },
+      { name:'Wells Fargo Autograph',      dining:3, travel:3,  groceries:1,   gas:3,   shopping:1,   subscriptions:3,  fee:0,   minScore:670, bonus:'20,000 points',      bonusReq:'after $1,000 in purchases in the first 3 months',  bonusVal:'$200',    types:['travel','cashback','everyday'], tag:'No-fee all-rounder across key categories' },
+      { name:'Citi Custom Cash',           dining:5, travel:5,  groceries:5,   gas:5,   shopping:5,   subscriptions:5,  fee:0,   minScore:650, bonus:'$200 cash back',     bonusReq:'after $1,500 in purchases in the first 6 months',  bonusVal:'$200',    types:['cashback','everyday'],    tag:'5% on your single top spending category' },
+      { name:'World of Hyatt Card',        dining:2, travel:2,  groceries:1,   gas:1,   shopping:1,   subscriptions:1,  fee:95,  minScore:700, bonus:'30,000 points',      bonusReq:'after $3,000 in purchases in the first 3 months',  bonusVal:'$600+',   types:['hotels','travel'],        tag:'Best card for Hyatt loyalists' },
+      { name:'Discover it Secured',        dining:2, travel:1,  groceries:1,   gas:2,   shopping:1,   subscriptions:1,  fee:0,   minScore:0,   bonus:'Cash back match',    bonusReq:'Discover matches all cash back earned in your first year', bonusVal:'Varies', types:['building','cashback'],  tag:'Best secured card for building credit' }
+    ];
+
+    let answers = {};
+    let currentStep = 1;
+
+    function updateProgress(step) {
+      document.getElementById('progressFill').style.width = ((step - 1) / 4 * 100) + '%';
+      document.getElementById('stepCount').textContent = 'Step ' + step + ' of 4';
+    }
+
+    function showStep(n) {
+      document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + n).classList.add('active');
+      currentStep = n;
+      updateProgress(n);
+    }
+
+    function showError(stepId, msg) {
+      const step = document.getElementById(stepId);
+      let err = step.querySelector('.quiz-error');
+      if (!err) {
+        err = document.createElement('p');
+        err.className = 'quiz-error';
+        step.querySelector('.step-actions').before(err);
+      }
+      err.textContent = msg;
+      clearTimeout(err._t);
+      err._t = setTimeout(() => err && err.remove(), 3000);
+    }
+
+    function nextStep(from) {
+      if (from === 1) {
+        const sel = document.querySelector('input[name="goal"]:checked');
+        if (!sel) { showError('step1', 'Please select a goal to continue.'); return; }
+        answers.goal = sel.value;
+      }
+      if (from === 3) {
+        const sel = document.querySelector('input[name="score"]:checked');
+        if (!sel) { showError('step3', 'Please select your credit score range to continue.'); return; }
+        answers.score = parseInt(sel.value);
+      }
+      showStep(from + 1);
+    }
+
+    function prevStep(from) { showStep(from - 1); }
+
+    function calcPts(card, s) {
+      return Math.round(
+        s.dining * card.dining +
+        s.travel * card.travel +
+        s.groceries * card.groceries +
+        s.gas * card.gas +
+        s.shopping * card.shopping +
+        s.subscriptions * card.subscriptions
+      );
+    }
+
+    function buildWhy(card, s) {
+      const cats = [
+        { key:'dining',        label:'dining',        multi:card.dining },
+        { key:'groceries',     label:'groceries',     multi:card.groceries },
+        { key:'travel',        label:'travel',        multi:card.travel },
+        { key:'gas',           label:'gas',           multi:card.gas },
+        { key:'subscriptions', label:'subscriptions', multi:card.subscriptions },
+        { key:'shopping',      label:'shopping',      multi:card.shopping }
+      ].filter(c => c.multi >= 3 && s[c.key] > 0)
+       .sort((a, b) => b.multi - a.multi)
+       .slice(0, 2);
+      if (!cats.length) return 'Earns rewards across your spending categories' + (card.fee === 0 ? ' with no annual fee.' : '.');
+      return 'Earns ' + cats.map(c => c.multi + 'x on ' + c.label + ' ($' + s[c.key] + '/mo)').join(' and ') + '.';
+    }
+
+    function showResults() {
+      const feeSel = document.querySelector('input[name="fee"]:checked');
+      if (!feeSel) { showError('step4', 'Please select your annual fee preference to continue.'); return; }
+      answers.fee = parseInt(feeSel.value);
+
+      const s = {
+        dining:        parseInt(document.getElementById('spendDining').value)    || 0,
+        travel:        parseInt(document.getElementById('spendTravel').value)    || 0,
+        groceries:     parseInt(document.getElementById('spendGroceries').value) || 0,
+        gas:           parseInt(document.getElementById('spendGas').value)       || 0,
+        shopping:      parseInt(document.getElementById('spendShopping').value)  || 0,
+        subscriptions: parseInt(document.getElementById('spendSubs').value)      || 0
+      };
+
+      let eligible = CARDS.filter(c => c.minScore <= answers.score && c.fee <= answers.fee);
+
+      eligible = eligible.map(c => {
+        const rawPts = calcPts(c, s);
+        const goalBoost = c.types.includes(answers.goal) ? 1.25 : 1;
+        return { ...c, displayPts: rawPts, sortScore: rawPts * goalBoost };
+      }).sort((a, b) => b.sortScore - a.sortScore);
+
+      const top3 = eligible.slice(0, Math.min(3, eligible.length));
+      const container = document.getElementById('resultCards');
+
+      if (!top3.length) {
+        container.innerHTML = '<p class="no-results">No cards matched your criteria. Try a higher annual fee limit or a different credit score range.</p>';
+      } else {
+        container.innerHTML = top3.map((card, i) => `
+          <div class="result-card${i === 0 ? ' result-card--top' : ''}">
+            ${i === 0 ? '<div class="result-badge">Best Match</div>' : ''}
+            <h3 class="result-card-name">${card.name}</h3>
+            <p class="result-card-tag">${card.tag}</p>
+            <div class="result-stats">
+              <div class="result-stat">
+                <span class="stat-label">Est. Monthly Points</span>
+                <span class="stat-value">${card.displayPts.toLocaleString()}</span>
+              </div>
+              <div class="result-stat">
+                <span class="stat-label">Annual Fee</span>
+                <span class="stat-value">${card.fee === 0 ? 'None' : '$' + card.fee}</span>
+              </div>
+            </div>
+            <div class="result-bonus-wrap">
+              <p class="bonus-label">Sign-Up Bonus</p>
+              <div class="bonus-blur-wrap">
+                <div class="bonus-content blurred" id="bc${i}">
+                  <div class="bonus-amount">${card.bonus}</div>
+                  <div class="bonus-req">${card.bonusReq}</div>
+                  <div class="bonus-val">Estimated value: ${card.bonusVal}</div>
+                </div>
+                <div class="bonus-gate" id="bg${i}">
+                  <p class="gate-text">Enter your email to reveal the sign-up bonus</p>
+                  <div class="gate-input-row">
+                    <input type="email" class="gate-email" id="ge${i}" placeholder="your@email.com">
+                    <button class="btn btn-primary gate-btn" onclick="unlockBonus(${i})">Reveal</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="result-why"><strong>Why this card:</strong> ${buildWhy(card, s)}</p>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('quizSection').style.display = 'none';
+      document.getElementById('resultsSection').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function unlockBonus(i) {
+      const input = document.getElementById('ge' + i);
+      const val = (input.value || '').trim();
+      if (!val || !val.includes('@') || !val.includes('.')) {
+        input.style.borderColor = '#c0392b';
+        setTimeout(() => { input.style.borderColor = ''; }, 2000);
+        return;
+      }
+      window.open('https://weekenddepartures.substack.com/subscribe?email=' + encodeURIComponent(val), '_blank');
+      document.getElementById('bc' + i).classList.remove('blurred');
+      document.getElementById('bg' + i).style.display = 'none';
+    }
+
+    function resetQuiz() {
+      answers = {};
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      document.querySelectorAll('.opt-label').forEach(l => l.classList.remove('selected'));
+      document.querySelectorAll('.spend-input').forEach(inp => inp.value = '');
+      document.getElementById('quizSection').style.display = 'block';
+      document.getElementById('resultsSection').style.display = 'none';
+      showStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    updateProgress(1);
+  </script>
+
+</body>
+</html>
