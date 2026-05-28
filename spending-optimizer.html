@@ -3,388 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spending Optimizer — Weekend Departures</title>
-  <meta name="description" content="Find out exactly which card to swipe for every purchase to earn the most points. Free tool from Weekend Departures.">
+  <title>Spending Optimizer | Weekend Departures</title>
+  <meta name="description" content="Find out exactly which card to swipe for every purchase to earn the most points possible.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .tool-section   { padding: 64px 80px 96px; }
-    .opt-wrap       { max-width: 860px; }
-
-    /* Block headings */
-    .opt-block { margin-bottom: 52px; }
-    .opt-block-heading {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .opt-block-sub {
-      font-size: 0.88rem;
-      font-weight: 300;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    /* Card selection grid */
-    .card-select-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .card-cb-item { position: relative; }
-    .card-cb-input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-    }
-    .card-cb-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 16px;
-      background: #fff;
-      border: 1.5px solid rgba(26,26,26,0.1);
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 400;
-      color: var(--text);
-      line-height: 1.35;
-      transition: border-color 0.2s, background 0.2s;
-      user-select: none;
-    }
-    .card-cb-label:hover { border-color: rgba(184,151,46,0.5); }
-    .card-cb-input:checked + .card-cb-label {
-      border-color: var(--gold);
-      background: rgba(184,151,46,0.05);
-    }
-    .cb-check {
-      width: 14px;
-      height: 14px;
-      border: 1.5px solid rgba(26,26,26,0.25);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .card-cb-input:checked + .card-cb-label .cb-check {
-      border-color: var(--gold);
-      background: var(--gold);
-    }
-    .cb-check-mark {
-      display: none;
-      width: 8px;
-      height: 5px;
-      border-left: 1.5px solid #fff;
-      border-bottom: 1.5px solid #fff;
-      transform: rotate(-45deg) translateY(-1px);
-    }
-    .card-cb-input:checked + .card-cb-label .cb-check-mark { display: block; }
-
-    /* Spending + card assignment table */
-    .opt-table {
-      width: 100%;
-      border: 1px solid rgba(26,26,26,0.1);
-      background: #fff;
-    }
-    .opt-table-header {
-      display: grid;
-      grid-template-columns: 1fr 130px 1fr;
-      gap: 0;
-      padding: 11px 22px;
-      background: var(--charcoal);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .opt-th {
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: rgba(255,255,255,0.45);
-    }
-    .opt-row {
-      display: grid;
-      grid-template-columns: 1fr 130px 1fr;
-      gap: 0;
-      align-items: center;
-      padding: 14px 22px;
-      border-bottom: 1px solid rgba(26,26,26,0.07);
-    }
-    .opt-row:last-child { border-bottom: none; }
-    .opt-cat {
-      font-size: 0.88rem;
-      font-weight: 400;
-      color: var(--text);
-      padding-right: 16px;
-    }
-    .opt-input-wrap {
-      display: flex;
-      align-items: center;
-      border: 1px solid rgba(26,26,26,0.15);
-      background: var(--bg);
-      width: 110px;
-      flex-shrink: 0;
-    }
-    .opt-input-wrap:focus-within { border-color: var(--gold); }
-    .opt-dollar {
-      padding: 8px 6px 8px 11px;
-      font-size: 0.83rem;
-      color: var(--muted);
-      user-select: none;
-    }
-    .opt-spend-input {
-      border: none;
-      outline: none;
-      background: transparent;
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      color: var(--text);
-      width: 100%;
-      padding: 8px 8px 8px 0;
-      -moz-appearance: textfield;
-    }
-    .opt-spend-input::-webkit-outer-spin-button,
-    .opt-spend-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .opt-select {
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      font-weight: 400;
-      color: var(--text);
-      background: var(--bg);
-      border: 1px solid rgba(26,26,26,0.15);
-      padding: 8px 12px;
-      width: 100%;
-      outline: none;
-      cursor: pointer;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7168' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 30px;
-      border-radius: 0;
-      transition: border-color 0.2s;
-      margin-left: 16px;
-    }
-    .opt-select:focus { border-color: var(--gold); }
-    .opt-select option { background: #fff; }
-
-    /* Error */
-    .opt-error {
-      font-size: 0.82rem;
-      color: #c0392b;
-      font-weight: 500;
-      margin-bottom: 16px;
-    }
-
-    /* Calculate button */
-    .calc-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-
-    /* Results section */
-    .results-section { padding: 64px 80px 96px; }
-
-    /* Summary bar */
-    .opt-summary {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      background: var(--charcoal);
-      margin-bottom: 44px;
-      max-width: 760px;
-    }
-    .opt-sum-block {
-      flex: 1;
-      padding: 28px 32px;
-    }
-    .opt-sum-block + .opt-sum-block {
-      border-left: 1px solid rgba(255,255,255,0.08);
-    }
-    .opt-sum-label {
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 8px;
-    }
-    .opt-sum-value {
-      font-family: var(--serif);
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1;
-    }
-    .opt-sum-value.is-gold { color: var(--gold); }
-
-    /* Breakdown table */
-    .breakdown-wrap {
-      max-width: 860px;
-      overflow-x: auto;
-      margin-bottom: 48px;
-    }
-    .breakdown-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 640px;
-    }
-    .breakdown-table thead tr {
-      background: #fff;
-      border-bottom: 2px solid rgba(26,26,26,0.08);
-    }
-    .breakdown-table th {
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: var(--muted);
-      padding: 12px 16px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    .breakdown-table tbody tr {
-      border-bottom: 1px solid rgba(26,26,26,0.06);
-      background: #fff;
-    }
-    .breakdown-table tbody tr:last-child { border-bottom: none; }
-    .breakdown-table td {
-      padding: 14px 16px;
-      font-size: 0.85rem;
-      font-weight: 300;
-      color: var(--text);
-      vertical-align: middle;
-    }
-    .breakdown-table td:first-child { font-weight: 500; }
-    .td-best-card { color: var(--gold); font-weight: 500 !important; }
-    .td-gain { font-weight: 600 !important; }
-    .td-gain.positive { color: var(--gold); }
-    .breakdown-table tfoot tr {
-      background: rgba(184,151,46,0.07);
-      border-top: 2px solid rgba(26,26,26,0.08);
-    }
-    .breakdown-table tfoot td {
-      padding: 14px 16px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    /* Locked section */
-    .locked-section {
-      max-width: 600px;
-      margin-bottom: 48px;
-      padding: 40px;
-      background: #fff;
-      border: 1px solid rgba(26,26,26,0.08);
-      border-top: 3px solid var(--gold);
-    }
-    .locked-eyebrow {
-      font-size: 0.58rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-    .locked-heading {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
-      margin-bottom: 20px;
-    }
-    .locked-blur-wrap { position: relative; }
-    .locked-content { transition: filter 0.3s ease; }
-    .locked-content.blurred {
-      filter: blur(7px);
-      user-select: none;
-      pointer-events: none;
-    }
-    .locked-card-name {
-      font-family: var(--serif);
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .locked-card-detail {
-      font-size: 0.88rem;
-      font-weight: 300;
-      color: #4a4540;
-      line-height: 1.72;
-    }
-    .locked-gate {
-      position: absolute;
-      inset: -6px;
-      background: rgba(255,255,255,0.96);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 8px 0;
-    }
-    .gate-text {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 10px;
-    }
-    .gate-input-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .gate-email {
-      font-family: var(--sans);
-      font-size: 0.88rem;
-      font-weight: 300;
-      color: var(--text);
-      background: var(--bg);
-      border: 1px solid rgba(26,26,26,0.2);
-      padding: 9px 14px;
-      outline: none;
-      width: 210px;
-      border-radius: 0;
-      -webkit-appearance: none;
-      appearance: none;
-      transition: border-color 0.2s;
-    }
-    .gate-email:focus { border-color: var(--gold); }
-    .gate-btn { padding: 9px 18px; font-size: 0.58rem; }
-
-    /* Responsive */
-    @media (max-width: 960px) {
-      .tool-section, .results-section {
-        padding-left: 28px;
-        padding-right: 28px;
-      }
-      .card-select-grid { grid-template-columns: repeat(2,1fr); }
-      .opt-summary { flex-direction: column; max-width: 100%; }
-      .opt-sum-block + .opt-sum-block { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
-    }
-    @media (max-width: 520px) {
-      .card-select-grid { grid-template-columns: 1fr; }
-      .opt-row { grid-template-columns: 1fr; gap: 8px; padding: 14px 16px; }
-      .opt-th:not(:first-child) { display: none; }
-      .opt-select { margin-left: 0; }
-      .gate-input-row { flex-direction: column; align-items: flex-start; }
-      .gate-email { width: 100%; }
-    }
+    /* Tool-specific styles */
+    .tool-wrap { max-width: 700px; margin: 0 auto; padding: 3rem 2rem 2rem; }
+    .main { display: flex; flex-direction: column; min-height: 100vh; }
+    .main .tool-wrap { flex: 1; }
+    .tool-header { margin-bottom: 2.5rem; }
+    .tool-label { font-size: 11px; letter-spacing: 0.12em; color: #B8972E; text-transform: uppercase; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; }
+    .tool-title { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 400; color: #1a1a1a; line-height: 1.15; margin-bottom: 0.75rem; }
+    .tool-title .accent { color: #B8972E; font-style: italic; }
+    .tool-sub { font-size: 15px; color: #666; line-height: 1.6; font-family: 'Inter', sans-serif; }
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 2.5rem; }
+    .prog-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; transition: background 0.2s; }
+    .prog-dot.done { background: #B8972E; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .step-heading { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: #1a1a1a; margin-bottom: 0.4rem; }
+    .step-sub { font-size: 13px; color: #888; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; line-height: 1.6; }
+    /* Card add row */
+    .add-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .add-row select, .add-row input[type=text] { flex: 1; border: 0.5px solid #ddd; border-radius: 6px; padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+    .add-row select:focus, .add-row input:focus { outline: none; border-color: #B8972E; }
+    .btn-add { background: #faf6ee; color: #7a6020; border: 0.5px solid #B8972E; border-radius: 6px; padding: 10px 16px; font-size: 13px; cursor: pointer; white-space: nowrap; font-family: 'Inter', sans-serif; }
+    .btn-add:hover { background: #f5eedc; }
+    .tags-area { min-height: 40px; margin-bottom: 1.5rem; }
+    .card-tag { display: inline-flex; align-items: center; gap: 6px; background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #1a1a1a; margin: 3px; font-family: 'Inter', sans-serif; }
+    .card-tag button { background: none; border: none; cursor: pointer; color: #aaa; font-size: 14px; padding: 0; line-height: 1; }
+    .card-tag button:hover { color: #cc3333; }
+    .no-cards { font-size: 13px; color: #aaa; font-style: italic; font-family: 'Inter', sans-serif; }
+    /* Spend table */
+    .spend-tbl { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    .spend-tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa; padding: 8px 12px; text-align: left; border-bottom: 0.5px solid #eee; font-family: 'Inter', sans-serif; }
+    .spend-tbl td { padding: 10px 12px; border-bottom: 0.5px solid #f0f0f0; font-size: 13px; font-family: 'Inter', sans-serif; color: #1a1a1a; }
+    .spend-tbl td input[type=number] { width: 100%; border: 0.5px solid #ddd; border-radius: 6px; padding: 7px 10px; font-size: 13px; font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+    .spend-tbl td input[type=number]:focus { outline: none; border-color: #B8972E; }
+    .spend-tbl td select { width: 100%; border: 0.5px solid #ddd; border-radius: 6px; padding: 7px 10px; font-size: 12px; font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+    .spend-tbl td select:focus { outline: none; border-color: #B8972E; }
+    .cat-lbl { display: flex; align-items: center; gap: 8px; }
+    .cat-dot { width: 8px; height: 8px; border-radius: 50%; background: #B8972E; flex-shrink: 0; }
+    /* Buttons */
+    .btn-primary { background: #B8972E; color: #fff; border: none; border-radius: 6px; padding: 12px 28px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-secondary { background: transparent; color: #888; border: 0.5px solid #ddd; border-radius: 6px; padding: 12px 20px; font-size: 14px; cursor: pointer; margin-right: 10px; font-family: 'Inter', sans-serif; }
+    /* Results */
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem; }
+    .metric-box { background: #f9f9f9; border-radius: 8px; padding: 1rem 1.25rem; }
+    .metric-box.gold { background: #faf6ee; }
+    .metric-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa; margin-bottom: 4px; font-family: 'Inter', sans-serif; }
+    .metric-val { font-size: 24px; font-weight: 500; color: #1a1a1a; font-family: 'Inter', sans-serif; }
+    .metric-box.gold .metric-val { color: #B8972E; }
+    .metric-note { font-size: 12px; color: #aaa; margin-top: 2px; font-family: 'Inter', sans-serif; }
+    .section-hdg { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: #1a1a1a; margin-bottom: 0.75rem; }
+    .divider { border: none; border-top: 0.5px solid #eee; margin: 2rem 0; }
+    /* Opt table */
+    .opt-tbl { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; }
+    .opt-tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa; padding: 8px 10px; text-align: left; background: #f9f9f9; border-bottom: 0.5px solid #eee; }
+    .opt-tbl td { padding: 10px 10px; border-bottom: 0.5px solid #f0f0f0; font-size: 13px; vertical-align: middle; }
+    .opt-tbl tr:last-child td { border-bottom: none; }
+    .badge-opt { display: inline-block; background: #faf6ee; color: #7a6020; border: 0.5px solid #e8d9a8; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 500; }
+    .badge-cur { display: inline-block; background: #f5f5f5; color: #888; border: 0.5px solid #e0e0e0; border-radius: 20px; padding: 3px 10px; font-size: 11px; }
+    .gap-pill { display: inline-block; background: #faf6ee; color: #B8972E; border-radius: 20px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+    .gap-zero { background: #f5f5f5; color: #aaa; border-radius: 20px; padding: 2px 8px; font-size: 11px; display: inline-block; }
+    .summary-text { font-size: 14px; color: #555; line-height: 1.8; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; }
+    /* Unlock box */
+    .unlock-box { border: 1.5px solid #B8972E; border-radius: 10px; padding: 1.75rem; background: #faf6ee; text-align: center; margin-top: 1rem; }
+    .unlock-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: #1a1a1a; margin-bottom: 0.4rem; }
+    .unlock-sub { font-size: 13px; color: #777; margin-bottom: 1.25rem; line-height: 1.6; font-family: 'Inter', sans-serif; }
+    .lock-label { font-size: 12px; color: #B8972E; font-weight: 500; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
+    .email-row { display: flex; gap: 8px; max-width: 380px; margin: 0 auto; }
+    .email-row input[type=email] { flex: 1; border: 0.5px solid #ddd; border-radius: 6px; padding: 10px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+    .email-row input[type=email]:focus { outline: none; border-color: #B8972E; }
+    .email-msg { font-size: 12px; color: #B8972E; margin-top: 8px; font-family: 'Inter', sans-serif; }
+    /* Missing card reveal */
+    .missing-reveal { display: none; margin-top: 1rem; }
+    .missing-box { border: 1.5px solid #B8972E; border-radius: 10px; padding: 1.5rem; background: #fff; }
+    .missing-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #B8972E; margin-bottom: 6px; font-family: 'Inter', sans-serif; }
+    .missing-name { font-family: 'Playfair Display', serif; font-size: 24px; color: #1a1a1a; margin-bottom: 6px; }
+    .missing-sub { font-size: 13px; color: #777; margin-bottom: 1rem; line-height: 1.6; font-family: 'Inter', sans-serif; }
+    .missing-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+    .missing-stat { background: #f9f9f9; border-radius: 6px; padding: 10px 12px; }
+    .missing-stat.hl { background: #faf6ee; }
+    .mstat-lbl { font-size: 11px; color: #aaa; font-family: 'Inter', sans-serif; }
+    .mstat-val { font-size: 15px; font-weight: 500; color: #1a1a1a; margin-top: 2px; font-family: 'Inter', sans-serif; }
+    .missing-stat.hl .mstat-val { color: #B8972E; }
+    .missing-why { font-size: 13px; color: #666; line-height: 1.7; background: #f9f9f9; border-radius: 6px; padding: 12px 14px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; }
+    .affiliate-slot { font-size: 12px; color: #aaa; border: 0.5px dashed #ddd; border-radius: 6px; padding: 10px; text-align: center; font-family: 'Inter', sans-serif; }
+    .restart-btn { font-size: 12px; color: #aaa; cursor: pointer; margin-top: 1rem; display: inline-flex; align-items: center; gap: 4px; background: none; border: none; padding: 0; font-family: 'Inter', sans-serif; }
+    .restart-btn:hover { color: #888; }
   </style>
 </head>
 <body>
 
-  <!-- Mobile nav toggle -->
   <button class="mobile-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Left Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <a href="index.html" class="brand-link">
@@ -402,498 +122,335 @@
       </ul>
     </nav>
     <div class="sidebar-footer">
-      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter ↗</a>
+      <a href="https://weekenddepartures.substack.com" target="_blank" rel="noopener" class="sidebar-sub-link">Newsletter</a>
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="main" id="main">
+    <div class="tool-wrap">
 
-    <div class="page-header">
-      <p class="section-label">Free Tools</p>
-      <h1 class="page-heading">Spending <span class="accent">Optimizer</span></h1>
-      <p class="page-sub">Find out exactly which card to swipe for every purchase to earn the most points possible.</p>
-    </div>
-
-    <!-- Input Section -->
-    <section class="tool-section" id="toolSection">
-      <div class="opt-wrap">
-
-        <!-- Step 1: Card selection -->
-        <div class="opt-block">
-          <h2 class="opt-block-heading">Step 1: Select the cards in your wallet</h2>
-          <p class="opt-block-sub">Check every credit card you currently own. You can select as many as you like.</p>
-          <div class="card-select-grid">
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb0" value="Chase Sapphire Preferred">
-              <label class="card-cb-label" for="cb0">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Chase Sapphire Preferred
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb1" value="Chase Sapphire Reserve">
-              <label class="card-cb-label" for="cb1">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Chase Sapphire Reserve
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb2" value="Chase Freedom Unlimited">
-              <label class="card-cb-label" for="cb2">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Chase Freedom Unlimited
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb3" value="Chase Freedom Flex">
-              <label class="card-cb-label" for="cb3">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Chase Freedom Flex
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb4" value="Amex Gold Card">
-              <label class="card-cb-label" for="cb4">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Amex Gold Card
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb5" value="Amex Platinum">
-              <label class="card-cb-label" for="cb5">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Amex Platinum
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb6" value="Amex Blue Cash Preferred">
-              <label class="card-cb-label" for="cb6">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Amex Blue Cash Preferred
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb7" value="Citi Double Cash">
-              <label class="card-cb-label" for="cb7">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Citi Double Cash
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb8" value="Citi Premier Card">
-              <label class="card-cb-label" for="cb8">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Citi Premier Card
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb9" value="Capital One Venture X">
-              <label class="card-cb-label" for="cb9">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Capital One Venture X
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb10" value="Capital One Venture">
-              <label class="card-cb-label" for="cb10">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Capital One Venture
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb11" value="Capital One SavorOne">
-              <label class="card-cb-label" for="cb11">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Capital One SavorOne
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb12" value="Discover it Cash Back">
-              <label class="card-cb-label" for="cb12">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Discover it Cash Back
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb13" value="Wells Fargo Autograph">
-              <label class="card-cb-label" for="cb13">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Wells Fargo Autograph
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb14" value="Citi Custom Cash">
-              <label class="card-cb-label" for="cb14">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Citi Custom Cash
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb15" value="World of Hyatt Card">
-              <label class="card-cb-label" for="cb15">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                World of Hyatt Card
-              </label>
-            </div>
-            <div class="card-cb-item">
-              <input type="checkbox" class="card-cb-input" id="cb16" value="Discover it Secured">
-              <label class="card-cb-label" for="cb16">
-                <span class="cb-check"><span class="cb-check-mark"></span></span>
-                Discover it Secured
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Spending + current card -->
-        <div class="opt-block">
-          <h2 class="opt-block-heading">Step 2: Enter your monthly spending</h2>
-          <p class="opt-block-sub">Add your approximate monthly spend for each category, and which card you currently swipe for it.</p>
-          <div class="opt-table">
-            <div class="opt-table-header">
-              <span class="opt-th">Category</span>
-              <span class="opt-th">Monthly Spend</span>
-              <span class="opt-th">Card You Currently Use</span>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Dining &amp; Restaurants</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="optdining" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="seldining">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Travel (flights, hotels, etc.)</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="opttravel" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="seltravel">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Groceries</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="optgroceries" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="selgroceries">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Gas &amp; Transportation</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="optgas" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="selgas">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Shopping &amp; Retail</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="optshopping" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="selshopping">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-            <div class="opt-row">
-              <span class="opt-cat">Subscriptions &amp; Streaming</span>
-              <div class="opt-input-wrap">
-                <span class="opt-dollar">$</span>
-                <input type="number" class="opt-spend-input" id="optsubscriptions" placeholder="0" min="0">
-              </div>
-              <select class="opt-select" id="selsubscriptions">
-                <option value="">Not assigned</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div id="calcError" class="opt-error" style="display:none;"></div>
-        <div class="calc-row">
-          <button class="btn btn-primary" onclick="calculate()">Calculate My Savings &rarr;</button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Results Section (hidden initially) -->
-    <section class="results-section" id="resultsSection" style="display:none;">
-
-      <div class="results-header" style="margin-bottom:36px;">
-        <p class="section-label">Your Results</p>
-        <h2 class="results-heading" style="font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;line-height:1.1;margin-bottom:8px;">Points left <span class="accent">on the table</span></h2>
-        <p class="results-sub" style="font-size:0.9rem;font-weight:300;color:var(--muted);">Here is what your wallet earns now vs. what it could earn with the right card for each category.</p>
+      <div class="tool-header">
+        <p class="tool-label">Free Tool</p>
+        <h1 class="tool-title">Optimize your <span class="accent">card spend.</span></h1>
+        <p class="tool-sub">Enter the cards you already have. See exactly which card to use for each spending category and how many points you are leaving on the table.</p>
       </div>
 
-      <!-- Summary bar -->
-      <div class="opt-summary">
-        <div class="opt-sum-block">
-          <div class="opt-sum-label">Current Monthly Points</div>
-          <div class="opt-sum-value" id="sumCurrent">0</div>
-        </div>
-        <div class="opt-sum-block">
-          <div class="opt-sum-label">Optimized Monthly Points</div>
-          <div class="opt-sum-value is-gold" id="sumOptimized">0</div>
-        </div>
-        <div class="opt-sum-block">
-          <div class="opt-sum-label">Monthly Points You're Missing</div>
-          <div class="opt-sum-value is-gold" id="sumGain">0</div>
-        </div>
+      <div class="progress-bar" id="prog">
+        <div class="prog-dot done" id="pd0"></div>
+        <div class="prog-dot" id="pd1"></div>
+        <div class="prog-dot" id="pd2"></div>
       </div>
 
-      <!-- Breakdown table -->
-      <div class="breakdown-wrap">
-        <table class="breakdown-table">
+      <!-- STEP 0: Add cards -->
+      <div class="step active" id="st0">
+        <h2 class="step-heading">Add your cards</h2>
+        <p class="step-sub">Select from the list or type your card name. Add as many as you have.</p>
+        <div class="add-row">
+          <select id="card-select" style="flex:1">
+            <option value="">Pick a card...</option>
+            <optgroup label="Chase">
+              <option>Chase Sapphire Preferred</option>
+              <option>Chase Sapphire Reserve</option>
+              <option>Chase Freedom Unlimited</option>
+              <option>Chase Freedom Flex</option>
+            </optgroup>
+            <optgroup label="American Express">
+              <option>Amex Gold Card</option>
+              <option>Amex Platinum</option>
+              <option>Amex Blue Cash Preferred</option>
+            </optgroup>
+            <optgroup label="Citi">
+              <option>Citi Double Cash</option>
+              <option>Citi Premier Card</option>
+              <option>Citi Custom Cash</option>
+            </optgroup>
+            <optgroup label="Capital One">
+              <option>Capital One Venture X</option>
+              <option>Capital One Venture</option>
+              <option>Capital One SavorOne</option>
+            </optgroup>
+            <optgroup label="Discover">
+              <option>Discover it Cash Back</option>
+              <option>Discover it Secured</option>
+            </optgroup>
+            <optgroup label="Wells Fargo">
+              <option>Wells Fargo Autograph</option>
+            </optgroup>
+            <optgroup label="Hotel Cards">
+              <option>World of Hyatt Card</option>
+            </optgroup>
+          </select>
+          <button class="btn-add" onclick="addCard()">+ Add</button>
+        </div>
+        <div class="tags-area" id="tags"><span class="no-cards">No cards added yet</span></div>
+        <button class="btn-primary" id="btn-next0" onclick="goStep(1)" disabled>Next</button>
+      </div>
+
+      <!-- STEP 1: Spending -->
+      <div class="step" id="st1">
+        <h2 class="step-heading">Your monthly spending</h2>
+        <p class="step-sub">Enter your average monthly spend per category and which card you currently use for each.</p>
+        <table class="spend-tbl">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Monthly Spend</th>
+              <th>Card you use now</th>
+            </tr>
+          </thead>
+          <tbody id="spend-tbody"></tbody>
+        </table>
+        <button class="btn-secondary" onclick="goStep(0)">Back</button>
+        <button class="btn-primary" onclick="calcResults()">Show results</button>
+      </div>
+
+      <!-- STEP 2: Results -->
+      <div class="step" id="st2">
+        <h2 class="step-heading">Here is what you are <span style="color:#B8972E">leaving behind.</span></h2>
+        <p class="step-sub" id="res-sub"></p>
+
+        <div class="metrics-grid" id="metrics"></div>
+
+        <div class="divider"></div>
+        <p class="section-hdg">Category by category breakdown</p>
+        <table class="opt-tbl">
           <thead>
             <tr>
               <th>Category</th>
               <th>Spend</th>
-              <th>Your Card</th>
-              <th>Your Points</th>
-              <th>Best Card</th>
-              <th>Max Points</th>
-              <th>Monthly Gain</th>
+              <th>Current card</th>
+              <th>Best card</th>
+              <th>Points/yr</th>
+              <th>Cash value/yr</th>
+              <th>Gap</th>
             </tr>
           </thead>
-          <tbody id="breakdownBody"></tbody>
-          <tfoot>
-            <tr id="breakdownTotals"></tr>
-          </tfoot>
+          <tbody id="opt-tbody"></tbody>
         </table>
-      </div>
 
-      <!-- Locked recommendation -->
-      <div class="locked-section">
-        <p class="locked-eyebrow">Your Top Card</p>
-        <h3 class="locked-heading">The one card you should never leave home without.</h3>
-        <div class="locked-blur-wrap">
-          <div class="locked-content blurred" id="lockedContent">
-            <div class="locked-card-name" id="lockedCardName">Loading...</div>
-            <div class="locked-card-detail" id="lockedCardDetail"></div>
+        <div class="divider"></div>
+        <p class="section-hdg">Summary</p>
+        <div class="summary-text" id="summary"></div>
+
+        <div class="divider"></div>
+
+        <div class="unlock-box" id="unlock-box">
+          <div class="lock-label">Unlock your personalized card recommendation</div>
+          <p class="unlock-title">This is the card you should be using.</p>
+          <p class="unlock-sub">Based on your exact spending, there is one card that would earn you significantly more points. Enter your email and we will reveal it plus exactly why it works for your wallet.</p>
+          <div class="email-row">
+            <input type="email" id="email-in" placeholder="your@email.com" />
+            <button class="btn-primary" onclick="submitEmail()">Reveal it</button>
           </div>
-          <div class="locked-gate" id="lockedGate">
-            <p class="gate-text">Enter your email to see your single best card recommendation</p>
-            <div class="gate-input-row">
-              <input type="email" class="gate-email" id="lockedEmail" placeholder="your@email.com">
-              <button class="btn btn-primary gate-btn" onclick="unlockRec()">Reveal</button>
-            </div>
-          </div>
+          <p class="email-msg" id="email-msg"></p>
         </div>
+
+        <div class="missing-reveal" id="missing-reveal"></div>
+
+        <button class="restart-btn" onclick="restart()">&#8635; Start over</button>
       </div>
 
-      <button class="btn btn-ghost" onclick="recalculate()" style="margin-top:8px;">&larr; Recalculate</button>
-
-    </section>
+    </div>
 
     <footer class="site-footer">
       <p>&copy; 2026 Weekend Departures. All rights reserved.</p>
       <p class="footer-right"><em>Travel More, Spend Less.</em></p>
     </footer>
-
   </main>
 
   <script>
-    /* Nav */
-    const toggle  = document.getElementById('navToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeNav() : openNav());
-    overlay.addEventListener('click', closeNav);
-    function openNav()  { sidebar.classList.add('open');    overlay.classList.add('visible');    toggle.setAttribute('aria-expanded','true');  }
-    function closeNav() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); toggle.setAttribute('aria-expanded','false'); }
+    const cardRates = {
+      "Chase Sapphire Preferred":   {dining:3,travel:5,groceries:3,gas:2,shopping:1,subscriptions:3,airlines:2,hotels:2,base:1},
+      "Chase Sapphire Reserve":     {dining:3,travel:10,groceries:1,gas:1,shopping:1,subscriptions:1,airlines:3,hotels:3,base:1},
+      "Chase Freedom Unlimited":    {dining:3,travel:5,groceries:1.5,gas:1.5,shopping:1.5,subscriptions:1.5,airlines:1.5,hotels:1.5,base:1.5},
+      "Chase Freedom Flex":         {dining:3,travel:5,groceries:5,gas:5,shopping:5,subscriptions:1,airlines:1,hotels:1,base:1},
+      "Amex Gold Card":             {dining:4,travel:3,groceries:4,gas:1,shopping:1,subscriptions:1,airlines:1,hotels:1,base:1},
+      "Amex Platinum":              {dining:1,travel:5,groceries:1,gas:1,shopping:1,subscriptions:1,airlines:5,hotels:1,base:1},
+      "Amex Blue Cash Preferred":   {dining:1,travel:3,groceries:6,gas:3,shopping:1,subscriptions:6,airlines:1,hotels:1,base:1},
+      "Citi Double Cash":           {dining:2,travel:2,groceries:2,gas:2,shopping:2,subscriptions:2,airlines:2,hotels:2,base:2},
+      "Citi Premier Card":          {dining:3,travel:3,groceries:3,gas:3,shopping:1,subscriptions:1,airlines:1,hotels:3,base:1},
+      "Citi Custom Cash":           {dining:5,travel:5,groceries:5,gas:5,shopping:5,subscriptions:5,airlines:1,hotels:1,base:1},
+      "Capital One Venture X":      {dining:2,travel:10,groceries:2,gas:2,shopping:2,subscriptions:2,airlines:5,hotels:5,base:2},
+      "Capital One Venture":        {dining:2,travel:5,groceries:2,gas:2,shopping:2,subscriptions:2,airlines:2,hotels:2,base:2},
+      "Capital One SavorOne":       {dining:3,travel:5,groceries:3,gas:1,shopping:1,subscriptions:3,airlines:1,hotels:1,base:1},
+      "Discover it Cash Back":      {dining:5,travel:1,groceries:5,gas:5,shopping:5,subscriptions:1,airlines:1,hotels:1,base:1},
+      "Discover it Secured":        {dining:2,travel:1,groceries:2,gas:2,shopping:1,subscriptions:1,airlines:1,hotels:1,base:1},
+      "Wells Fargo Autograph":      {dining:3,travel:3,groceries:1,gas:3,shopping:3,subscriptions:3,airlines:1,hotels:1,base:1},
+      "World of Hyatt Card":        {dining:2,travel:2,groceries:1,gas:1,shopping:1,subscriptions:1,airlines:1,hotels:4,base:1}
+    };
 
-    /* Card data */
-    const CARDS = [
-      { name:'Chase Sapphire Preferred',   dining:3,   travel:5,  groceries:3,   gas:2,   shopping:1,   subscriptions:3   },
-      { name:'Chase Sapphire Reserve',     dining:3,   travel:10, groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
-      { name:'Chase Freedom Unlimited',    dining:3,   travel:5,  groceries:1.5, gas:1.5, shopping:1.5, subscriptions:1.5 },
-      { name:'Chase Freedom Flex',         dining:3,   travel:5,  groceries:5,   gas:5,   shopping:1,   subscriptions:1   },
-      { name:'Amex Gold Card',             dining:4,   travel:3,  groceries:4,   gas:1,   shopping:1,   subscriptions:1   },
-      { name:'Amex Platinum',              dining:1,   travel:5,  groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
-      { name:'Amex Blue Cash Preferred',   dining:1,   travel:1,  groceries:6,   gas:3,   shopping:1,   subscriptions:6   },
-      { name:'Citi Double Cash',           dining:2,   travel:2,  groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
-      { name:'Citi Premier Card',          dining:3,   travel:3,  groceries:3,   gas:3,   shopping:1,   subscriptions:1   },
-      { name:'Capital One Venture X',      dining:2,   travel:10, groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
-      { name:'Capital One Venture',        dining:2,   travel:5,  groceries:2,   gas:2,   shopping:2,   subscriptions:2   },
-      { name:'Capital One SavorOne',       dining:3,   travel:1,  groceries:3,   gas:1,   shopping:1,   subscriptions:3   },
-      { name:'Discover it Cash Back',      dining:5,   travel:1,  groceries:5,   gas:5,   shopping:1,   subscriptions:1   },
-      { name:'Wells Fargo Autograph',      dining:3,   travel:3,  groceries:1,   gas:3,   shopping:1,   subscriptions:3   },
-      { name:'Citi Custom Cash',           dining:5,   travel:5,  groceries:5,   gas:5,   shopping:5,   subscriptions:5   },
-      { name:'World of Hyatt Card',        dining:2,   travel:2,  groceries:1,   gas:1,   shopping:1,   subscriptions:1   },
-      { name:'Discover it Secured',        dining:2,   travel:1,  groceries:1,   gas:2,   shopping:1,   subscriptions:1   }
+    const allCards = Object.keys(cardRates);
+    const cats = [
+      {key:'dining',label:'Dining'},
+      {key:'groceries',label:'Groceries'},
+      {key:'travel',label:'Travel'},
+      {key:'gas',label:'Gas'},
+      {key:'shopping',label:'Shopping'},
+      {key:'subscriptions',label:'Subscriptions'},
+      {key:'airlines',label:'Airlines'},
+      {key:'hotels',label:'Hotels'}
     ];
 
-    const CATEGORIES = [
-      { id:'dining',        label:'Dining',         key:'dining' },
-      { id:'travel',        label:'Travel',         key:'travel' },
-      { id:'groceries',     label:'Groceries',      key:'groceries' },
-      { id:'gas',           label:'Gas',            key:'gas' },
-      { id:'shopping',      label:'Shopping',       key:'shopping' },
-      { id:'subscriptions', label:'Subscriptions',  key:'subscriptions' }
-    ];
+    const CPP = 0.015;
+    let myCards = [], spendData = {}, missingCard = null;
 
-    /* Update dropdowns when cards are checked/unchecked */
-    function updateDropdowns() {
-      const selected = [...document.querySelectorAll('.card-cb-input:checked')].map(cb => cb.value);
-      CATEGORIES.forEach(cat => {
-        const sel = document.getElementById('sel' + cat.id);
-        const prev = sel.value;
-        sel.innerHTML = '<option value="">Not assigned</option>';
-        selected.forEach(name => {
-          const opt = document.createElement('option');
-          opt.value = name;
-          opt.textContent = name;
-          if (name === prev) opt.selected = true;
-          sel.appendChild(opt);
-        });
-      });
+    function syncInput() {}
+    function syncSelect() {}
+
+    function addCard() {
+      const v = document.getElementById('card-select').value;
+      if (!v || myCards.includes(v)) return;
+      myCards.push(v);
+      renderTags();
+      document.getElementById('card-select').value = '';
+      document.getElementById('btn-next0').disabled = false;
     }
 
-    document.querySelectorAll('.card-cb-input').forEach(cb => cb.addEventListener('change', updateDropdowns));
-
-    /* Calculate */
-    function calculate() {
-      const selectedNames = [...document.querySelectorAll('.card-cb-input:checked')].map(cb => cb.value);
-      const errEl = document.getElementById('calcError');
-
-      if (!selectedNames.length) {
-        errEl.textContent = 'Please select at least one card in your wallet to continue.';
-        errEl.style.display = 'block';
-        setTimeout(() => { errEl.style.display = 'none'; }, 4000);
-        return;
+    function removeCard(n) {
+      myCards = myCards.filter(c => c !== n);
+      renderTags();
+      if (!myCards.length) {
+        document.getElementById('btn-next0').disabled = true;
+        document.getElementById('tags').innerHTML = '<span class="no-cards">No cards added yet</span>';
       }
+    }
 
-      const selectedCards = CARDS.filter(c => selectedNames.includes(c.name));
-      let hasSpend = false;
-      let totalCurrentPts = 0;
-      let totalOptPts = 0;
-      const rows = [];
+    function renderTags() {
+      const el = document.getElementById('tags');
+      if (!myCards.length) { el.innerHTML = '<span class="no-cards">No cards added yet</span>'; return; }
+      el.innerHTML = myCards.map(c => `<span class="card-tag">${c}<button onclick="removeCard('${c.replace(/'/g,"\\'")}')">x</button></span>`).join('');
+    }
 
-      CATEGORIES.forEach(cat => {
-        const spend = parseInt(document.getElementById('opt' + cat.id).value) || 0;
-        if (!spend) return;
-        hasSpend = true;
-
-        const currentCardName = document.getElementById('sel' + cat.id).value;
-        const currentCard = CARDS.find(c => c.name === currentCardName) || null;
-        const currentPts = currentCard ? Math.round(spend * currentCard[cat.key]) : 0;
-
-        let bestCard = null;
-        let bestPts = 0;
-        selectedCards.forEach(c => {
-          const pts = Math.round(spend * c[cat.key]);
-          if (pts > bestPts) { bestPts = pts; bestCard = c; }
-        });
-
-        const gain = bestPts - currentPts;
-        totalCurrentPts += currentPts;
-        totalOptPts += bestPts;
-
-        rows.push({
-          label: cat.label,
-          spend,
-          currentCardName: currentCard ? currentCard.name : '--',
-          currentPts,
-          bestCardName: bestCard ? bestCard.name : '--',
-          bestPts,
-          gain
-        });
-      });
-
-      if (!hasSpend) {
-        errEl.textContent = 'Please enter at least one spending amount to continue.';
-        errEl.style.display = 'block';
-        setTimeout(() => { errEl.style.display = 'none'; }, 4000);
-        return;
-      }
-
-      errEl.style.display = 'none';
-
-      /* Summary */
-      document.getElementById('sumCurrent').textContent   = totalCurrentPts.toLocaleString();
-      document.getElementById('sumOptimized').textContent = totalOptPts.toLocaleString();
-      document.getElementById('sumGain').textContent      = (totalOptPts - totalCurrentPts).toLocaleString();
-
-      /* Table rows */
-      const tbody = document.getElementById('breakdownBody');
-      tbody.innerHTML = rows.map(r => `
+    function buildSpendTable() {
+      const opts = ['None', ...myCards].map(c => `<option>${c}</option>`).join('');
+      document.getElementById('spend-tbody').innerHTML = cats.map(cat => `
         <tr>
-          <td>${r.label}</td>
-          <td>$${r.spend.toLocaleString()}/mo</td>
-          <td>${r.currentCardName}</td>
-          <td>${r.currentPts.toLocaleString()}</td>
-          <td class="td-best-card">${r.bestCardName}</td>
-          <td>${r.bestPts.toLocaleString()}</td>
-          <td class="td-gain${r.gain > 0 ? ' positive' : ''}">+${r.gain.toLocaleString()}</td>
-        </tr>
-      `).join('');
-
-      /* Totals row */
-      const totalGain = totalOptPts - totalCurrentPts;
-      document.getElementById('breakdownTotals').innerHTML = `
-        <td>Total</td>
-        <td></td>
-        <td></td>
-        <td>${totalCurrentPts.toLocaleString()}</td>
-        <td></td>
-        <td>${totalOptPts.toLocaleString()}</td>
-        <td>+${totalGain.toLocaleString()}</td>
-      `;
-
-      /* Best single card across all spend */
-      const cardTotals = selectedCards.map(c => {
-        const total = CATEGORIES.reduce((sum, cat) => {
-          const spend = parseInt(document.getElementById('opt' + cat.id).value) || 0;
-          return sum + Math.round(spend * c[cat.key]);
-        }, 0);
-        return { card: c, total };
-      }).sort((a, b) => b.total - a.total);
-
-      const best = cardTotals[0];
-      document.getElementById('lockedCardName').textContent = best.card.name;
-      document.getElementById('lockedCardDetail').textContent =
-        'Used across all your spending, this card earns you ' + best.total.toLocaleString() +
-        ' points per month. That is roughly $' + Math.round(best.total * 0.015).toLocaleString() +
-        ' in travel value every single month.';
-
-      /* Show results */
-      document.getElementById('toolSection').style.display = 'none';
-      document.getElementById('resultsSection').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+          <td><div class="cat-lbl"><span class="cat-dot"></span>${cat.label}</div></td>
+          <td><input type="number" min="0" step="25" value="${spendData[cat.key]?.spend||0}" onchange="spendData['${cat.key}']={...(spendData['${cat.key}']||{}),spend:parseInt(this.value)||0}" /></td>
+          <td><select onchange="spendData['${cat.key}']={...(spendData['${cat.key}']||{}),card:this.value}">${opts}</select></td>
+        </tr>`).join('');
     }
 
-    function unlockRec() {
-      const input = document.getElementById('lockedEmail');
-      const val = (input.value || '').trim();
-      if (!val || !val.includes('@') || !val.includes('.')) {
-        input.style.borderColor = '#c0392b';
-        setTimeout(() => { input.style.borderColor = ''; }, 2000);
+    function getRate(card, key) { const r = cardRates[card]; return r ? (r[key]||r.base||1) : 1; }
+    function bestOwned(key) {
+      let b = {card:myCards[0]||'',rate:0};
+      myCards.forEach(c => { const r=getRate(c,key); if(r>b.rate) b={card:c,rate:r}; });
+      return b;
+    }
+
+    function findMissing() {
+      const notOwned = allCards.filter(c => !myCards.includes(c));
+      let best = {card:'',extra:0,breakdown:[]};
+      notOwned.forEach(candidate => {
+        let extra=0; const bd=[];
+        cats.forEach(cat => {
+          const spend=spendData[cat.key]?.spend||0; if(!spend) return;
+          const cur=bestOwned(cat.key); const cr=getRate(candidate,cat.key);
+          if(cr>cur.rate){const g=(cr-cur.rate)*spend*12; extra+=g; bd.push({cat:cat.label,gain:Math.round(g),cr,curRate:cur.rate,spend});}
+        });
+        if(extra>best.extra) best={card:candidate,extra:Math.round(extra),breakdown:bd};
+      });
+      return best;
+    }
+
+    function calcResults() {
+      cats.forEach(cat => { if(!spendData[cat.key]) spendData[cat.key]={spend:0,card:'None'}; });
+      let cur=0, opt=0; const rows=[];
+      cats.forEach(cat => {
+        const spend=spendData[cat.key]?.spend||0; if(!spend) return;
+        const curCard=spendData[cat.key]?.card||'None';
+        const best=bestOwned(cat.key);
+        const curRate=curCard==='None'?1:getRate(curCard,cat.key);
+        const curYr=Math.round(spend*curRate*12); const optYr=Math.round(spend*best.rate*12);
+        cur+=curYr; opt+=optYr;
+        rows.push({cat,spend,curCard,curRate,bestCard:best.card,bestRate:best.rate,curYr,optYr,gap:optYr-curYr});
+      });
+      const gap=opt-cur;
+      document.getElementById('res-sub').textContent='Based on your current card usage vs your optimized wallet.';
+      document.getElementById('metrics').innerHTML=`
+        <div class="metric-box"><div class="metric-lbl">Points earned now (annual)</div><div class="metric-val">${cur.toLocaleString()}</div><div class="metric-note">~$${Math.round(cur*CPP).toLocaleString()} cash value</div></div>
+        <div class="metric-box gold"><div class="metric-lbl">Optimized potential (annual)</div><div class="metric-val">${opt.toLocaleString()}</div><div class="metric-note">~$${Math.round(opt*CPP).toLocaleString()} cash value</div></div>
+        <div class="metric-box"><div class="metric-lbl">Points left on table</div><div class="metric-val">${gap.toLocaleString()}</div><div class="metric-note">From suboptimal card use</div></div>
+        <div class="metric-box gold"><div class="metric-lbl">Extra cash value available</div><div class="metric-val">$${Math.round(gap*CPP).toLocaleString()}</div><div class="metric-note">By switching to right card</div></div>`;
+      const tbody=document.getElementById('opt-tbody'); tbody.innerHTML='';
+      rows.forEach(r=>{
+        const ok=r.curCard===r.bestCard||r.curRate>=r.bestRate;
+        tbody.innerHTML+=`<tr>
+          <td>${r.cat.label}</td>
+          <td>$${r.spend.toLocaleString()}/mo</td>
+          <td><span class="badge-cur">${r.curCard==='None'?'No card':r.curCard} (${r.curRate}x)</span></td>
+          <td><span class="badge-opt">${r.bestCard} (${r.bestRate}x)</span></td>
+          <td>${r.optYr.toLocaleString()} pts<br><span style="font-size:11px;color:#aaa">vs ${r.curYr.toLocaleString()} now</span></td>
+          <td>$${Math.round(r.optYr*CPP).toLocaleString()}/yr<br><span style="font-size:11px;color:#aaa">vs $${Math.round(r.curYr*CPP).toLocaleString()} now</span></td>
+          <td>${ok?'<span class="gap-zero">Optimal</span>':'<span class="gap-pill">+'+r.gap.toLocaleString()+' pts</span>'}</td>
+        </tr>`;
+      });
+      const top=[...rows].sort((a,b)=>b.gap-a.gap).slice(0,3).filter(r=>r.gap>0);
+      let s=`With your current setup you are earning <strong>${cur.toLocaleString()} points per year</strong>, worth about <strong>$${Math.round(cur*CPP).toLocaleString()}</strong>. By switching to the right card for each category, you could earn <strong>${opt.toLocaleString()} points</strong>, worth about <strong>$${Math.round(opt*CPP).toLocaleString()}</strong>.`;
+      if(top.length) s+='<br><br>Your biggest opportunities: '+top.map(r=>`use your <strong>${r.bestCard}</strong> for ${r.cat.label} to earn ${r.bestRate}x instead of ${r.curRate}x (+${r.gap.toLocaleString()} pts/yr)`).join(', ')+'.';
+      document.getElementById('summary').innerHTML=s;
+      missingCard=findMissing();
+      goStep(2);
+    }
+
+    function submitEmail() {
+      const email=document.getElementById('email-in').value;
+      if(!email||!email.includes('@')){document.getElementById('email-msg').textContent='Please enter a valid email.';return;}
+      window.open('https://weekenddepartures.substack.com/subscribe','_blank');
+      document.getElementById('unlock-box').style.display='none';
+      revealMissing();
+    }
+
+    function revealMissing() {
+      const el=document.getElementById('missing-reveal');
+      if(!missingCard||!missingCard.card){
+        el.style.display='block';
+        el.innerHTML='<p style="font-size:14px;color:#777;padding:1rem 0;font-family:Inter,sans-serif;">Your current card setup is already well optimized for your spending.</p>';
         return;
       }
-      window.open('https://weekenddepartures.substack.com/subscribe?email=' + encodeURIComponent(val), '_blank');
-      document.getElementById('lockedContent').classList.remove('blurred');
-      document.getElementById('lockedGate').style.display = 'none';
+      const d=missingCard; const extraCash=Math.round(d.extra*CPP);
+      const top=d.breakdown.sort((a,b)=>b.gain-a.gain).slice(0,3);
+      el.style.display='block';
+      el.innerHTML=`<div class="missing-box">
+        <div class="missing-label">This is the card you should be using</div>
+        <div class="missing-name">${d.card}</div>
+        <div class="missing-sub">Based on your spending, this is the card you do not have that would earn you the most additional points. Here is exactly why it works for your wallet.</div>
+        <div class="missing-stats">
+          <div class="missing-stat hl"><div class="mstat-lbl">Extra pts/yr</div><div class="mstat-val">+${d.extra.toLocaleString()}</div></div>
+          <div class="missing-stat hl"><div class="mstat-lbl">Extra cash value</div><div class="mstat-val">+$${extraCash.toLocaleString()}</div></div>
+          <div class="missing-stat"><div class="mstat-lbl">Best category</div><div class="mstat-val">${top[0]?.cat||'Mixed'}</div></div>
+        </div>
+        <div class="missing-why"><strong>Why this card for your spending:</strong><br>${top.map(c=>`${c.cat}: earns ${c.cr}x vs your current ${c.curRate}x, adding ${c.gain.toLocaleString()} pts/yr on your $${c.spend.toLocaleString()}/mo spend`).join('<br>')}</div>
+        <div class="affiliate-slot">Apply link coming soon</div>
+      </div>`;
     }
 
-    function recalculate() {
-      document.getElementById('toolSection').style.display = 'block';
-      document.getElementById('resultsSection').style.display = 'none';
-      document.getElementById('lockedContent').classList.add('blurred');
-      document.getElementById('lockedGate').style.display = 'flex';
-      document.getElementById('lockedEmail').value = '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+      document.getElementById('st'+n).classList.add('active');
+      for(let i=0;i<=2;i++) document.getElementById('pd'+i).classList.toggle('done',i<=n);
+      if(n===1) buildSpendTable();
     }
+
+    function restart() {
+      myCards=[];spendData={};missingCard=null;
+      renderTags();
+      document.getElementById('btn-next0').disabled=true;
+      document.getElementById('unlock-box').style.display='block';
+      document.getElementById('missing-reveal').style.display='none';
+      document.getElementById('email-in').value='';
+      document.getElementById('email-msg').textContent='';
+      goStep(0);
+    }
+
+    // Mobile nav
+    const toggle=document.getElementById('navToggle');
+    const sidebar=document.getElementById('sidebar');
+    const overlay=document.getElementById('sidebarOverlay');
+    function openNav(){sidebar.classList.add('open');overlay.classList.add('visible');toggle.setAttribute('aria-expanded','true');}
+    function closeNav(){sidebar.classList.remove('open');overlay.classList.remove('visible');toggle.setAttribute('aria-expanded','false');}
+    toggle.addEventListener('click',()=>sidebar.classList.contains('open')?closeNav():openNav());
+    overlay.addEventListener('click',closeNav);
   </script>
 
 </body>
