@@ -399,13 +399,9 @@
         document.getElementById('email-msg').textContent = 'Please enter a valid email.';
         return;
       }
-      fetch('https://weekenddepartures.substack.com/api/v1/free?nojs=true', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
-      }).catch(() => {});
       document.getElementById('unlock-box').style.display = 'none';
       revealMissing();
+      window.open('https://weekenddepartures.substack.com/subscribe?email=' + encodeURIComponent(email), '_blank');
     }
 
     function revealAfterSubscribe() {

@@ -354,19 +354,9 @@
         document.getElementById('email-msg').textContent = 'Please enter a valid email.';
         return;
       }
-      // Submit to Substack via their subscribe endpoint
-      fetch('https://weekenddepartures.substack.com/api/v1/free?nojs=true', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
-      }).catch(() => {}); // fail silently — reveal regardless
       document.getElementById('unlock-box').style.display = 'none';
       document.querySelectorAll('.blurred').forEach(el => el.classList.remove('blurred'));
-    }
-
-    function revealBonuses() {
-      document.querySelectorAll('.blurred').forEach(el=>el.classList.remove('blurred'));
-      document.getElementById('unlock-box').style.display='none';
+      window.open('https://weekenddepartures.substack.com/subscribe?email=' + encodeURIComponent(email), '_blank');
     }
 
     function goStep(n) {
