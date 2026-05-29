@@ -237,12 +237,10 @@
         <div class="unlock-box" id="unlock-box">
           <div class="lock-label">Unlock your personalized card recommendation</div>
           <p class="unlock-title">This is the card you should be using.</p>
-          <p class="unlock-sub">Based on your exact spending, there is one card that would earn you significantly more points. Enter your email and we will reveal it plus exactly why it works for your wallet.</p>
-          <div class="email-row">
-            <input type="email" id="email-in" placeholder="your@email.com" />
-            <button class="btn-primary" onclick="submitEmail()">Reveal it</button>
-          </div>
-          <p class="email-msg" id="email-msg"></p>
+          <p class="unlock-sub">Subscribe and we will give you the full breakdown including sign-up bonus figures and exactly why this card works for your wallet.</p>
+          <iframe src="https://weekenddepartures.substack.com/embed" width="100%" height="150" style="border:none;background:transparent;max-width:480px;display:block;margin:0 auto;" frameborder="0" scrolling="no"></iframe>
+          <p style="font-size:11px;color:#aaa;margin-top:8px;font-family:'Inter',sans-serif;">After subscribing, your card recommendation will appear below.</p>
+          <button class="btn-primary" onclick="revealAfterSubscribe()" style="margin-top:12px;">I subscribed, show me the card</button>
         </div>
 
         <div class="missing-reveal" id="missing-reveal"></div>
@@ -393,10 +391,7 @@
       goStep(2);
     }
 
-    function submitEmail() {
-      const email=document.getElementById('email-in').value;
-      if(!email||!email.includes('@')){document.getElementById('email-msg').textContent='Please enter a valid email.';return;}
-      window.open('https://weekenddepartures.substack.com/subscribe','_blank');
+    function revealAfterSubscribe() {
       document.getElementById('unlock-box').style.display='none';
       revealMissing();
     }
