@@ -200,9 +200,11 @@
           <div class="lock-lbl">Sign-up bonuses locked</div>
           <p class="unlock-title">Get your personalized card report</p>
           <p class="unlock-sub">Subscribe and we will give you the full breakdown including sign-up bonus figures for each card.</p>
-          <iframe src="https://weekenddepartures.substack.com/embed" width="100%" height="150" style="border:none;background:transparent;max-width:480px;display:block;margin:0 auto;" frameborder="0" scrolling="no" id="substack-embed"></iframe>
-          <p style="font-size:11px;color:#aaa;margin-top:8px;font-family:'Inter',sans-serif;">After subscribing, your full breakdown will appear below.</p>
-          <button class="btn-primary" onclick="revealBonuses()" style="margin-top:12px;">I subscribed, show me the bonuses</button>
+          <div class="email-row">
+            <input type="email" id="email-in" placeholder="your@email.com" />
+            <button class="btn-primary" onclick="submitAndReveal()">Subscribe</button>
+          </div>
+          <p class="email-msg" id="email-msg"></p>
         </div>
         <button class="restart-btn" onclick="restart()">&#8635; Start over</button>
       </div>
@@ -344,6 +346,22 @@
         </div>`;
       });
       goStep(4);
+    }
+
+    function submitAndReveal() {
+      const email = document.getElementById('email-in').value.trim();
+      if (!email || !email.includes('@')) {
+        document.getElementById('email-msg').textContent = 'Please enter a valid email.';
+        return;
+      }
+      // Submit to Substack via their subscribe endpoint
+      fetch('https://weekenddepartures.substack.com/api/v1/free?nojs=true', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).catch(() => {}); // fail silently — reveal regardless
+      document.getElementById('unlock-box').style.display = 'none';
+      document.querySelectorAll('.blurred').forEach(el => el.classList.remove('blurred'));
     }
 
     function revealBonuses() {
