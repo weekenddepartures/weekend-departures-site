@@ -149,10 +149,12 @@ img {
   z-index: 400;
   opacity: 0;
   transition: opacity var(--ease);
+  pointer-events: none;
 }
 
 .sidebar-overlay.visible {
   opacity: 1;
+  pointer-events: all;
 }
 
 /* ==============================================
