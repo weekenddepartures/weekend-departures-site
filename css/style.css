@@ -798,6 +798,8 @@ blockquote {
   border: 1px solid rgba(26, 26, 26, 0.07);
   padding: 48px 40px 44px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   transition: transform var(--ease), box-shadow var(--ease);
 }
 
@@ -831,6 +833,12 @@ blockquote {
   color: #4a4540;
   line-height: 1.8;
   margin-bottom: 36px;
+  flex-grow: 1;
+}
+
+.service-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
 }
 
 /* ==============================================
